@@ -1,30 +1,50 @@
-import React from 'react'
+import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 function LoginForm() {
 
-    const navigate = useNavigate();
+    const [userName, setUserName] = useState('')
+    const [userPassword, setUserPassword] = useState('')
+    const navigate = useNavigate()
 
-    const changePage = () => {
-        navigate('/layout');
+    const handleLogin = async (e) => {
+
+        e.preventDefault();
+
+        try {
+            const response = await axios.post('http://localhost:5000/user', {
+                registerNo: userName,
+                password: userPassword
+            })
+            if (response.status === 200) {
+                navigate('/layout')
+            }
+        }
+        catch (error) {
+            console.log("Error during login : ", error);
+        }
     }
 
     return (
         <div className="p-10 md:p-14 flex flex-col justify-center bg-white">
+
             <h2 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h2>
             <p className="text-gray-500 mb-10">Sign in to access your management dashboard.</p>
 
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleLogin}>
 
                 {/* Username */}
                 <div>
                     <label className="block text-sm mb-1 font-medium text-gray-700">Username / Email</label>
                     <div className="relative">
-                        <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">👤</span>
+                        {/* <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">👤</span> */}
                         <input
                             type="text"
+                            onChange={(e) => setUserName(e.target.value)}
+                            value={userName}
                             placeholder="manager.id@hostel.com"
-                            className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl shadow-sm text-gray-700 placeholder-gray-400 focus:ring-teal-500 focus:border-teal-500 outline-none transition"
+                            className="w-full pl-4 pr-4 py-3 border border-gray-300 rounded-xl shadow-sm text-gray-700 placeholder-gray-400 focus:ring-teal-500 focus:border-teal-500 outline-none transition"
                             required
                         />
                     </div>
@@ -34,11 +54,13 @@ function LoginForm() {
                 <div>
                     <label className="block text-sm mb-1 font-medium text-gray-700">Password</label>
                     <div className="relative">
-                        <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">🔒</span>
+                        {/* <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">🔒</span> */}
                         <input
                             type="password"
+                            onChange={(e) => setUserPassword(e.target.value)}
+                            value={userPassword}
                             placeholder="••••••••"
-                            className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl shadow-sm text-gray-700 placeholder-gray-400 focus:ring-teal-500 focus:border-teal-500 outline-none transition"
+                            className="w-full pl-4 pr-4 py-3 border border-gray-300 rounded-xl shadow-sm text-gray-700 placeholder-gray-400 focus:ring-teal-500 focus:border-teal-500 outline-none transition"
                             required
                         />
                     </div>
@@ -55,7 +77,6 @@ function LoginForm() {
 
                 {/* Login Button */}
                 <button
-                    onClick={changePage}
                     type="submit"
                     className="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl shadow-md shadow-teal-200 transition"
                 >
@@ -67,4 +88,4 @@ function LoginForm() {
     )
 }
 
-export default LoginForm
+export default LoginForm;
