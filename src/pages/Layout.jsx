@@ -67,7 +67,7 @@ export default function Layout() {
 							>
 								{/* <Settings className="w-5 h-5" /> */}
 								<Users className="w-5 h-5" />
-								UserManagement
+								User Management
 							</NavLink>
 						</li>
 

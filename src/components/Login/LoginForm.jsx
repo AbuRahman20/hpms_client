@@ -17,8 +17,12 @@ function LoginForm() {
                 registerNo: userName,
                 password: userPassword
             })
+            console.log(response)
             if (response.status === 200) {
                 navigate('/layout')
+            }
+            else{
+                alert(response.data.message)
             }
         }
         catch (error) {
