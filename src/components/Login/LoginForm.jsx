@@ -8,27 +8,29 @@ function LoginForm() {
     const [userPassword, setUserPassword] = useState('')
     const navigate = useNavigate()
 
-    const handleLogin = async (e) => {
+   const handleLogin = async (e) => {
+    e.preventDefault();
 
-        e.preventDefault();
+    try {
+        const response = await axios.post('http://localhost:5000/user', {
+            registerNo: userName,
+            password: userPassword
+        });
 
-        try {
-            const response = await axios.post('http://localhost:5000/user', {
-                registerNo: userName,
-                password: userPassword
-            })
-            console.log(response)
-            if (response.status === 200) {
-                navigate('/layout')
-            }
-            else{
-                alert(response.data.message)
-            }
+        if (response.status === 200) {
+            navigate('/layout');
         }
-        catch (error) {
-            console.log("Error during login : ", error);
+
+    } catch (error) {
+        if (error.response) {
+            alert(error.response.data.message);
+        } else {
+            alert("Server not responding");
         }
     }
+};
+
+
 
     return (
         <div className="p-10 md:p-14 flex flex-col justify-center bg-white">

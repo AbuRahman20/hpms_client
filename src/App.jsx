@@ -5,6 +5,8 @@ import Layout from './pages/Layout'
 import Home from './pages/Home'
 import Contact from './pages/Contact'
 import UserManagement from './pages/UserManagement'
+import Hostel from './pages/Hostel'
+import Payment from './pages/Payment'
 
 function App() {
 
@@ -16,6 +18,8 @@ function App() {
 					<Route path='home' element={<Home />} />
 					<Route path='contact' element={<Contact />} />
 					<Route path='userManagement' element={<UserManagement />} />
+					<Route path='hostelManagement' element={<Hostel />} />
+					<Route path='payment' element={<Payment />} />
 				</Route>
 
 			</Routes>
