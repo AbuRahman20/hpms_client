@@ -86,25 +86,7 @@ export default function Layout() {
 								Hostel
 							</NavLink>
 						</li>
-
-						{/* Payment Management */}
-
-						<li>
-							<NavLink
-								to="/layout/Payment"
-								className={({ isActive }) =>
-									`flex items-center gap-3 px-4 py-2.5 rounded-lg transition ${isActive
-										? 'bg-teal-600 text-white shadow-md shadow-teal-600/30'
-										: 'text-gray-300 hover:bg-gray-800 hover:text-white'
-									}`
-								}
-							>
-								{/* <Settings className="w-5 h-5" /> */}
-								< Building2 className="w-5 h-5" />
-								Hostel
-							</NavLink>
-						</li>
-
+						
 						{/* Settings */}
 						<li>
 							<NavLink
@@ -151,9 +133,6 @@ export default function Layout() {
 							<Users className="w-6 h-6" />
 						</NavLink>
 						<NavLink to="/layout/hostelManagement" className="hover:text-teal-600 transition">
-							<Building2  className="w-6 h-6" />
-						</NavLink>
-						<NavLink to="/layout/Payment" className="hover:text-teal-600 transition">
 							<Building2  className="w-6 h-6" />
 						</NavLink>
 						<NavLink to="/layout/settings" className="hover:text-teal-600 transition">

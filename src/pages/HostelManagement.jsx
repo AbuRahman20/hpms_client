@@ -1,32 +1,33 @@
-import React from 'react';
+import React,{useState} from 'react';
 import { Edit2, Trash2 } from 'lucide-react';
 import { useEffect } from 'react';
+import axios from 'axios';
 
-function HostelTable({ filteredHostels, searchTerm, onEdit, onDelete }) {
+function HostelManagement() {
+
+    const [hostels, setHostels] = useState({
+        hostelId: '', hostelName: '', location: '', totalRooms: '', wardenName: ''
+    });
+    const [searchTerm, setSearchTerm] = useState('');
 
     const fetchHostel = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const response = await axios.get('http://localhost:5000/fetchhosteldata');
-                setUsers(response.data);
-            } catch (err) {
-                setError('Failed to load hostel data. Please check the backend server and network connection.');
-            } finally {
-                setLoading(false);
-            }
-        };
+        try {
+            const response = await axios.get('http://localhost:5000/fetchhosteldata');
+            setHostels(response.data);
+        } catch (err) {
+            console.log('Error in fetching hostel data : ', err);
+        }
+    };
 
-
-    useEffect(()=>{
+    useEffect(() => {
         fetchHostel();
-    },[])
+    }, [])
 
     return (
         <div className="relative">
             <div className="overflow-x-auto bg-white rounded-xl shadow-lg">
                 <table className="min-w-full divide-y divide-gray-200">
-                    
+
                     {/* TABLE HEADER */}
                     <thead className="bg-gray-50">
                         <tr>
@@ -53,8 +54,8 @@ function HostelTable({ filteredHostels, searchTerm, onEdit, onDelete }) {
 
                     {/* TABLE BODY */}
                     <tbody className="divide-y divide-gray-200">
-                        {filteredHostels.length > 0 ? (
-                            filteredHostels.map((hostel, index) => (
+                        {hostels.length > 0 ? (
+                            hostels.map((hostel, index) => (
                                 <tr
                                     key={hostel.hostelId || index}
                                     className="hover:bg-teal-50"
@@ -94,19 +95,17 @@ function HostelTable({ filteredHostels, searchTerm, onEdit, onDelete }) {
                             ))
                         ) : (
                             <tr>
-                                <td
-                                    colSpan="6"
-                                    className="px-6 py-10 text-center text-gray-500 text-lg"
-                                >
+                                <td colSpan="6" className="px-6 py-10 text-center text-gray-500 text-lg">
                                     No hostels found matching "{searchTerm}".
                                 </td>
                             </tr>
                         )}
                     </tbody>
+
                 </table>
             </div>
         </div>
     );
 }
 
-export default HostelTable;
+export default HostelManagement;

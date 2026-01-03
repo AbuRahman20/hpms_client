@@ -12,7 +12,6 @@ function UserTable({ filteredUsers, searchTerm, onDelete, onEdit }) {
                             <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Reg No</th>
                             <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Name</th>
                             <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Department</th>
-                 
                             <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Year</th>
                             <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Phone No</th>
                             <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
