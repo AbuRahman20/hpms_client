@@ -8,29 +8,29 @@ function LoginForm() {
     const [userPassword, setUserPassword] = useState('')
     const navigate = useNavigate()
 
-   const handleLogin = async (e) => {
-    e.preventDefault();
+    const handleLogin = async (e) => {
 
-    try {
-        const response = await axios.post('http://localhost:5000/user', {
-            registerNo: userName,
-            password: userPassword
-        });
+        e.preventDefault();
 
-        if (response.status === 200) {
+        try {
+            const response = await axios.post('http://localhost:5000/user', {
+                registerNo: userName,
+                password: userPassword
+            });
+            if (response.status === 200) {
+            const { registerNo, role } = response.data.user;
+            sessionStorage.setItem('registerNo', registerNo);
+            sessionStorage.setItem('role', role);
             navigate('/layout');
         }
-
-    } catch (error) {
-        if (error.response) {
-            alert(error.response.data.message);
-        } else {
-            alert("Server not responding");
+        } catch (error) {
+            if (error.response) {
+                alert(error.response.data.message);
+            } else {
+                alert("Server not responding");
+            }
         }
-    }
-};
-
-
+    };
 
     return (
         <div className="p-10 md:p-14 flex flex-col justify-center bg-white">

@@ -5,6 +5,9 @@ import UserManagement from './UserManagement';
 
 // More Realistic, Professional & Modern Admin Layout
 export default function Layout() {
+
+	const role = sessionStorage.getItem('registerNo'); 
+
 	return (
 		<div className="min-h-screen flex bg-gray-100 font-sans antialiased">
 
@@ -14,7 +17,7 @@ export default function Layout() {
 					<UserCircle className="w-10 h-10 text-teal-400" />
 					<div>
 						<h1 className="text-lg font-bold tracking-tight text-white">HostelSphere</h1>
-						<p className="text-xs text-gray-400">Admin Panel</p>
+						<p className="text-xs text-gray-400">Welcome {role}</p>
 					</div>
 				</div>
 
