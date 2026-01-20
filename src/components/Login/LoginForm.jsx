@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
-function LoginForm() {
+function LoginForm({ onOpenRegister }) {
 
     const [userName, setUserName] = useState('')
     const [userPassword, setUserPassword] = useState('')
+
     const navigate = useNavigate()
 
     const handleLogin = async (e) => {
@@ -16,13 +17,13 @@ function LoginForm() {
             const response = await axios.post('http://localhost:5000/user', {
                 registerNo: userName,
                 password: userPassword
-            });
+            })
             if (response.status === 200) {
-            const { registerNo, role } = response.data.user;
-            sessionStorage.setItem('registerNo', registerNo);
-            sessionStorage.setItem('role', role);
-            navigate('/layout');
-        }
+                const { registerNo, role } = response.data.user;
+                sessionStorage.setItem('registerNo', registerNo);
+                sessionStorage.setItem('role', role);
+                navigate('/layout');
+            }
         } catch (error) {
             if (error.response) {
                 alert(error.response.data.message);
@@ -89,6 +90,17 @@ function LoginForm() {
                     Sign In
                 </button>
 
+                <p className="text-sm text-center mt-6 text-gray-600">
+                    Don’t have an account?
+                    <button
+                        type="button"
+                        onClick={onOpenRegister}
+                        className="text-teal-600 font-semibold ml-1 hover:underline"
+                    >
+                        Create Account
+                    </button>
+
+                </p>
             </form>
         </div>
     )

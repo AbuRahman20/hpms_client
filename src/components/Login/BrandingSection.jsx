@@ -9,11 +9,11 @@ function BrandingSection() {
                     Hostel<span className="text-yellow-300">Sphere</span>
                 </h1>
                 <p className="text-lg leading-relaxed opacity-90">
-                    Simplify hostel, PG & property operations with an intuitive management system built for modern administrators.
+                    Simplify hostel & property operations with an intuitive management system built for modern administrators.
                 </p>
             </div>
 
-            <div className="mt-10 text-sm text-teal-100 opacity-90">© 2025 HostelSphere PMS</div>
+            <div className="mt-10 text-sm text-teal-100 opacity-90">© 2025 HostelSphere HMS</div>
         </div>
     )
 }
