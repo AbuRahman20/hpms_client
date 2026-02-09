@@ -3,7 +3,9 @@ import React from 'react'
 function BrandingSection() {
     
     return (
+        
         <div className="bg-teal-600 text-white p-12 flex flex-col justify-between relative">
+            
             <div>
                 <h1 className="text-4xl font-extrabold tracking-wide mb-6">
                     Hostel<span className="text-yellow-300">Sphere</span>

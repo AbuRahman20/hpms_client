@@ -12,6 +12,7 @@ function HostelManagement() {
     const [searchTerm, setSearchTerm] = useState('');
 
     // FETCH HOSTEL DATA
+
     const fetchHostels = async () => {
         setLoading(true);
         setError(null);
@@ -25,7 +26,6 @@ function HostelManagement() {
             setLoading(false);
         }
     };
-
     useEffect(() => {
         fetchHostels();
     }, []);
@@ -39,13 +39,12 @@ function HostelManagement() {
     // EDIT HANDLER
     const onEdit = (hostel) => {
         console.log('Edit hostel:', hostel);
-        // open edit modal here
     };
 
     // DELETE HANDLER
+
     const onDelete = async (hostel) => {
         if (!window.confirm(`Delete ${hostel.hostelName}?`)) return;
-
         try {
             await axios.delete(`${apiUrl}/deletehostel/${hostel._id}`);
             fetchHostels();
@@ -54,10 +53,8 @@ function HostelManagement() {
             alert('Failed to delete hostel');
         }
     };
-
     return (
         <div className="relative p-4">
-
             {/* SEARCH */}
             <input
                 type="text"
@@ -66,7 +63,6 @@ function HostelManagement() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="mb-4 px-4 py-2 border rounded-lg w-full md:w-1/3"
             />
-
             {/* LOADING */}
             {loading && (
                 <div className="text-center py-6 text-gray-500">
@@ -82,15 +78,14 @@ function HostelManagement() {
             )}
 
             {!loading && !error && (
-                <HostelTable 
+                <HostelTable
                     filteredHostels={filteredHostels}
                     searchTerm={searchTerm}
                     onEdit={onEdit}
                     onDelete={onDelete}
-                    />
+                />
             )}
         </div>
     );
 }
-
 export default HostelManagement;

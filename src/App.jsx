@@ -6,6 +6,8 @@ import Dashboard from './pages/DashBoard'
 import Contact from './pages/Contact'
 import UserManagement from './pages/UserManagement'
 import HostelManagement from './pages/HostelManagement'
+import Room from './pages/Room'
+import Bed from './pages/Bed'
 
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
 					<Route path='contact' element={<Contact />} />
 					<Route path='userManagement' element={<UserManagement />} />
 					<Route path='hostelManagement' element={<HostelManagement />} />
+					<Route path='room' element={<Room />} />
+					<Route path='bed' element={<Bed />} />
 				</Route>
 
 			</Routes>
