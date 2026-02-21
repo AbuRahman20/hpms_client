@@ -3,13 +3,12 @@ import { Edit3, Trash2, Phone, GraduationCap, Hash, ArrowUpRight } from 'lucide-
 
 function UserTable({ filteredUsers, searchTerm, onDelete, onEdit }) {
     
-    // Helper to get initials for the avatar
     const getInitials = (name) => {
         return name ? name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) : '??';
     };
 
     return (
-        <div className="w-full py-6">
+        <div className="w-full mt-6">
             {filteredUsers.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {filteredUsers.map((user, index) => (

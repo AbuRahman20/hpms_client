@@ -43,7 +43,7 @@ function LoginForm({ onOpenRegister }) {
 
                 {/* Username */}
                 <div>
-                    <label className="block text-sm mb-1 font-medium text-gray-700">Username / Email</label>
+                    <label className="block text-sm mb-2 font-medium text-gray-700">Username / Email</label>
                     <div className="relative">
                         {/* <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">👤</span> */}
                         <input
@@ -59,7 +59,7 @@ function LoginForm({ onOpenRegister }) {
 
                 {/* Password */}
                 <div>
-                    <label className="block text-sm mb-1 font-medium text-gray-700">Password</label>
+                    <label className="block text-sm mb-2 font-medium text-gray-700">Password</label>
                     <div className="relative">
                         {/* <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">🔒</span> */}
                         <input

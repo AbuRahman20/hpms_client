@@ -3,7 +3,7 @@ import { Edit3, Trash2, MapPin, DoorOpen, User, Hash, Building2 } from 'lucide-r
 
 function HostelTable({ filteredHostels, searchTerm, onEdit, onDelete }) {
     return (
-        <div className="w-full py-6">
+        <div className="w-full mt-6">
             {filteredHostels.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {filteredHostels.map((hostel, index) => (

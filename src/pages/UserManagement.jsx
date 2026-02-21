@@ -37,8 +37,6 @@ function UserManagement() {
         }
     };
 
-    
-
     useEffect(() => {
         fetchUsers();
     }, []);
@@ -102,7 +100,7 @@ function UserManagement() {
     }
 
     return (
-        <div className="p-4">
+        <div className="">
 
             {/* {Search Input} */}
             <SearchInput

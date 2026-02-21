@@ -1,60 +1,37 @@
-import React from 'react';
+import React from "react";
 
 const BrandingSection = () => {
-  const currentYear = new Date().getFullYear();
 
-  return (
-    <section className="relative min-h-[600px] flex flex-col justify-between p-10 md:p-16 overflow-hidden bg-teal-700 rounded-3xl shadow-2xl">
-      
-      {/* 1. Background Pattern Overlay for Depth */}
-      <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
-        <svg className="h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <defs>
-            <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-              <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5"/>
-            </pattern>
-          </defs>
-          <rect width="100" height="100" fill="url(#grid)" />
-        </svg>
-      </div>
+    const currentYear = new Date().getFullYear();
 
-      {/* 2. Top Content: Branding & Mission */}
-      <div className="relative z-10 max-w-lg">
-        <header className="mb-10">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tight text-white mb-6">
-            Hostel<span className="text-yellow-400">Sphere</span>
-          </h1>
-          <div className="h-1.5 w-20 bg-yellow-400 rounded-full mb-8" />
-        </header>
+    return (
+        <section className="relative w-full flex flex-col justify-between p-12 md:p-14 bg-slate-900 rounded-l-2xl shadow-xl overflow-hidden border border-slate-800">
+            <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-teal-900/20 to-transparent pointer-events-none" />
 
-        <article>
-          <p className="text-xl md:text-2xl font-medium text-teal-50 leading-relaxed opacity-95">
-            Elevating property management through 
-            <span className="text-white border-b-2 border-yellow-400/50 mx-1">intelligent automation</span> 
-            designed for the modern administrator.
-          </p>
-        </article>
-      </div>
+            {/* Main Content Area */}
+            <div className="relative z-10 max-w-2xl">
+                <div className="mb-8">
+                    <span className="text-teal-400 text-sm font-bold uppercase tracking-[0.2em] mb-4 block">Property Management Suite</span>
+                    <h1 className="text-5xl md:text-6xl font-semibold tracking-tight text-white mb-6">HostelSphere</h1>
+                    <p className="text-lg md:text-xl text-slate-400 leading-relaxed font-light">An intelligent, automated ecosystem for property administrators. Designed to reduce complexity and scale operations with precision.</p>
+                </div>
 
-      {/* 3. Bottom Content: Trust Indicators & Footer */}
-      <footer className="relative z-10 mt-16 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-        <div className="flex items-center space-x-4">
-          <div className="flex -space-x-2">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="w-8 h-8 rounded-full border-2 border-teal-700 bg-teal-500 flex items-center justify-center text-[10px] font-bold text-white uppercase tracking-tighter">
-                H{i}
-              </div>
-            ))}
-          </div>
-          <span className="text-sm font-semibold text-teal-100">Trusted by 50+ Property Managers</span>
-        </div>
+                <button className="px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white font-medium text-sm rounded transition-colors duration-200 shadow-lg shadow-teal-900/20">Explore Features</button>
+            </div>
 
-        <div className="text-xs font-bold uppercase tracking-[0.2em] text-teal-200 opacity-80">
-          © {currentYear} HostelSphere HMS • v1.0.4
-        </div>
-      </footer>
-    </section>
-  );
+            {/* Footer / Meta Information */}
+            <footer className="relative z-10 mt-20 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div className="text-slate-500 text-sm font-medium">
+                    Trusted by <span className="text-slate-200 font-semibold">50+ property managers</span> worldwide
+                </div>
+
+                <div className="flex items-center gap-8 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-600">
+                    <span>v1.0.4</span>
+                    <span>© {currentYear} HostelSphere</span>
+                </div>
+            </footer>
+        </section>
+    );
 };
 
 export default BrandingSection;

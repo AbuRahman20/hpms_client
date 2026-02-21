@@ -3,8 +3,8 @@ import axios from 'axios';
 import { Building2, DoorOpen, BedDouble, Search, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 
 function Bed() {
-    const apiUrl = import.meta.env.VITE_API_URL;
 
+    const apiUrl = import.meta.env.VITE_API_URL;
     // --- State Management ---
     const [hostels, setHostels] = useState([]);
     const [rooms, setRooms] = useState([]);
@@ -54,17 +54,17 @@ function Bed() {
     };
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] p-6 lg:p-12 font-sans text-slate-900">
-            <div className="max-w-6xl mx-auto">
+        <div className="font-sans text-slate-900">
+            <div className="mx-auto">
 
                 {/* --- HEADER --- */}
-                <header className="mb-10">
+                <header className="mb-8">
                     <h1 className="text-4xl font-black tracking-tight text-slate-900">Bed <span className="text-teal-600">Allocation</span></h1>
                     <p className="text-slate-500 mt-2 font-medium">Manage and visualize real-time bed availability across units.</p>
                 </header>
 
                 {/* --- SELECTION PANEL --- */}
-                <div className="bg-white p-6 rounded-[2.5rem] shadow-xl shadow-slate-200/60 border border-slate-100 flex flex-col md:flex-row items-end gap-6 mb-12">
+                <div className="bg-white p-6 rounded-[1rem] shadow-xl shadow-slate-200/60 border border-slate-100 flex flex-col md:flex-row items-end gap-6 mb-8">
 
                     {/* Hostel Select */}
                     <div className="flex-1 w-full group">
@@ -114,7 +114,7 @@ function Bed() {
                         beds.map((bed) => (
                             <div
                                 key={bed._id}
-                                className="bg-white border border-slate-100 p-6 rounded-[2rem] shadow-sm hover:shadow-md transition-all group"
+                                className="bg-white border border-slate-100 p-6 rounded-[1rem] shadow-sm hover:shadow-md transition-all group"
                             >
                                 <div className="flex justify-between items-start mb-6">
                                     <div className={`p-3 rounded-xl ${bed.status === 'Available' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>

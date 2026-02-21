@@ -42,8 +42,8 @@ function Room() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 p-6 lg:p-10 font-sans">
-            <div className="max-w-7xl mx-auto">
+        <div className="font-sans">
+            <div className="mx-auto">
                 
                 {/* --- HEADER SECTION --- */}
                 <div className="mb-8">
@@ -52,7 +52,7 @@ function Room() {
                 </div>
 
                 {/* --- SEARCH BAR / DROPDOWN --- */}
-                <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col md:flex-row items-end gap-4 mb-10">
+                <div className="bg-white p-6 rounded-[1rem] shadow-sm border border-slate-100 flex flex-col md:flex-row items-end gap-4 mb-10">
                     <div className="flex-1 w-full">
                         <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-teal-600 mb-3 ml-2">
                             Property Selection
@@ -85,7 +85,7 @@ function Room() {
                 </div>
 
                 {/* --- TABLE SECTION --- */}
-                <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
+                <div className="bg-white rounded-[1rem] shadow-sm border border-slate-100 overflow-hidden">
                     {rooms.length > 0 ? (
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
