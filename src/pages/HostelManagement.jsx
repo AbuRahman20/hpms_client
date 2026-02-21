@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import HostelTable from '../components/HostelManagement/HostelTable';
 
 function HostelManagement() {
@@ -10,6 +11,7 @@ function HostelManagement() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const { id } = useParams();
 
     // FETCH HOSTEL DATA
 
@@ -53,6 +55,7 @@ function HostelManagement() {
             alert('Failed to delete hostel');
         }
     };
+
     return (
         <div className="relative p-4">
             {/* SEARCH */}
