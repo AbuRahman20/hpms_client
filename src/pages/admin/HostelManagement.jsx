@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import HostelTable from "../components/HostelManagement/HostelTable";
+import HostelTable from "../../components/HostelManagement/HostelTable";
 import { Search, Plus } from "lucide-react";
 
 function HostelManagement() {

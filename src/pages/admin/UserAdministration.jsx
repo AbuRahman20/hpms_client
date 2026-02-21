@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search, Plus, Edit2, Trash2, Loader2, AlertTriangle, Users, X } from 'lucide-react';
-import UserTable from '../components/UserManagement/UserTable';
-import SearchInput from '../components/UserManagement/SearchInput';
-import AddModal from '../components/UserManagement/AddModal';
-import EditModal from '../components/UserManagement/EditModal';
-import DeleteModal from '../components/UserManagement/DeleteModal';
+import UserTable from '../../components/UserAdministration/UserTable';
+import SearchInput from '../../components/UserAdministration/SearchInput';
+import AddModal from '../../components/UserAdministration/AddModal';
+import EditModal from '../../components/UserAdministration/EditModal';
+import DeleteModal from '../../components/UserAdministration/DeleteModal';
 
-function UserManagement() {
+function UserAdministration() {
 
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -151,4 +151,4 @@ function UserManagement() {
     )
 }
 
-export default UserManagement;
+export default UserAdministration;

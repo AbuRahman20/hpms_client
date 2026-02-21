@@ -10,10 +10,10 @@ function Layout() {
     const adminNavItems = [
         { to: "/layout/home", icon: LayoutDashboard, label: "Admin Dashboard" },
         { to: "/layout/contact", icon: Phone, label: "Support Center" },
-        { to: "/layout/userManagement", icon: Users, label: "User Administration" },
+        { to: "/layout/userAdministration", icon: Users, label: "User Administration" },
         { to: "/layout/hostelManagement", icon: Building2, label: "Hostel Management" },
-        { to: "/layout/room", icon: DoorOpen, label: "Room Allocation" },
-        { to: "/layout/bed", icon: BedDouble, label: "Bed Management" },
+        { to: "/layout/roomAllocation", icon: DoorOpen, label: "Room Allocation" },
+        { to: "/layout/bedManagement", icon: BedDouble, label: "Bed Management" },
         { to: "/layout/settings", icon: Settings, label: "System Settings" },
     ];
 

@@ -1,7 +1,7 @@
 import React,{useState} from "react";
-import BrandingSection from "../components/Login/BrandingSection";
-import LoginForm from "../components/Login/LoginForm";
-import RegisterModal from "../components/Login/RegisterModal";
+import BrandingSection from "../../components/Login/BrandingSection";
+import LoginForm from "../../components/Login/LoginForm";
+import RegisterModal from "../../components/Login/RegisterModal";
 
 function Login() {
 
