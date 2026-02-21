@@ -10,6 +10,7 @@ import Room from './pages/Room'
 import Bed from './pages/Bed'
 
 
+
 function App() {
 
 	return (
@@ -23,7 +24,9 @@ function App() {
 					<Route path='hostelManagement' element={<HostelManagement />} />
 					<Route path='room' element={<Room />} />
 					<Route path='bed' element={<Bed />} />
+					
 				</Route>
+
 
 			</Routes>
 		</Router>
