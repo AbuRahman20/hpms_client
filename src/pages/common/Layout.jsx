@@ -1,24 +1,28 @@
 import React from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LogOut, Phone, UserCircle, Settings, LayoutDashboard, Users, Building2, DoorOpen, BedDouble } from "lucide-react";
+import { LogOut, Phone, UserCircle, Settings, LayoutDashboard, Users, Building2, DoorOpen, BedDouble, ClipboardList, CheckCircle2 } from "lucide-react";
 
 function Layout() {
 
     const role = sessionStorage.getItem("role");
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const adminNavItems = [
-        { to: "/layout/home", icon: LayoutDashboard, label: "Admin Dashboard" },
-        { to: "/layout/contact", icon: Phone, label: "Support Center" },
+        { to: "/layout/s", icon: LayoutDashboard, label: "Admin Dashboard" },
+        { to: "/layout/supportCenter", icon: Phone, label: "Support Center" },
         { to: "/layout/userAdministration", icon: Users, label: "User Administration" },
         { to: "/layout/hostelManagement", icon: Building2, label: "Hostel Management" },
-        { to: "/layout/roomAllocation", icon: DoorOpen, label: "Room Allocation" },
+        { to: "/layout/roomAllocation", icon: DoorOpen, label: "Room Management" },
         { to: "/layout/bedManagement", icon: BedDouble, label: "Bed Management" },
-        { to: "/layout/settings", icon: Settings, label: "System Settings" },
+        { to: "/layout/bookingRequests", icon: ClipboardList, label: "Booking Requests" },
+        { to: "/layout/allocationManagement", icon: CheckCircle2, label: "Allocation Management" },
+        { to: "/layout/systemSettings", icon: Settings, label: "System Settings" },
     ];
 
     const studentNavItems = [
-        { to: "/layout/contact", icon: Phone, label: "Contact Support" },
+        { to: "/layout/hostelBooking", icon: Building2, label: "Hostel Booking" },
+        { to: "/layout/myBookingRequests", icon: ClipboardList, label: "My Booking Requests" },
+        { to: "/layout/contactSupport", icon: Phone, label: "Contact Support" },
         { to: "/layout/settings", icon: Settings, label: "Settings" },
     ];
 
