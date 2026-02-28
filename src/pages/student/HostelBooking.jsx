@@ -17,7 +17,7 @@ function HostelBooking() {
     const [data, setData] = useState({ hostels: [], rooms: [], beds: [] });
     const [selection, setSelection] = useState({ hostel: "", room: "", bed: "" });
     const [ui, setUi] = useState({ loading: true, processing: false });
-    const studentId = "65f3c2e81a45c3f67b123456";
+    const registerNo = sessionStorage.getItem("registerNo");
 
     // 1. Fetch Hostels
     useEffect(() => {
@@ -55,8 +55,8 @@ function HostelBooking() {
         setUi(prev => ({ ...prev, processing: true }));
 
         try {
-            await axios.post(`${apiUrl}/api/student/booking-request`, {
-                studentId,
+            await axios.post(`${apiUrl}/api/hostelBooking/booking-request`, {
+                registerNo,
                 hostelId: selection.hostel,
                 roomId: selection.room,
                 bedId: selection.bed,
