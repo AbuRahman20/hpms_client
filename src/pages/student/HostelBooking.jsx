@@ -73,7 +73,7 @@ function HostelBooking() {
 
     if (ui.loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-teal-50 to-emerald-50 flex items-center justify-center">
+            <div className="bg-gradient-to-br from-teal-50 to-emerald-50 flex items-center justify-center">
                 <div className="text-center">
                     <div className="w-16 h-16 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin mx-auto mb-4"></div>
                     <p className="text-slate-600 font-medium">Loading available accommodations...</p>
@@ -83,7 +83,7 @@ function HostelBooking() {
     }
 
     return (
-        <div className="min-h-screen">
+        <div>
 
             {/* Header Section with Teal Accents */}
             <div className="mb-10">
@@ -225,7 +225,7 @@ function HostelBooking() {
                     </div>
 
                     {/* Bed Selection Section */}
-                    <div className="mb-8">
+                    <div>
                         <div className="flex items-center justify-between mb-4">
                             <label className="text-sm font-medium text-slate-700 flex items-center gap-1.5">
                                 <BedDouble size={16} className="text-teal-600" />
