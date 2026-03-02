@@ -77,52 +77,54 @@ function MyBookingRequest() {
                 </div>
             ) : (
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {requests.map((req) => (
-                        <div
-                            key={req._id}
-                            className="group relative bg-white border border-slate-100 rounded-[2rem] p-8 shadow-sm hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-300 flex flex-col justify-between"
-                        >
-                            <div>
-                                <div className="flex justify-between items-start mb-6">
-                                    <div className="p-3 bg-slate-50 rounded-2xl group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors">
-                                        <Building2 size={24} />
+                    {requests
+                        .filter((req) => req.status === "Pending")
+                        .map((req) => (
+                            <div
+                                key={req._id}
+                                className="group relative bg-white border border-slate-100 rounded-[2rem] p-8 shadow-sm hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-300 flex flex-col justify-between"
+                            >
+                                <div>
+                                    <div className="flex justify-between items-start mb-6">
+                                        <div className="p-3 bg-slate-50 rounded-2xl group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors">
+                                            <Building2 size={24} />
+                                        </div>
+                                        <StatusBadge status={req.status} />
                                     </div>
-                                    <StatusBadge status={req.status} />
+
+                                    <h3 className="text-xl font-black text-slate-800 tracking-tight mb-4 group-hover:text-teal-700 transition-colors">
+                                        {req.hostelId?.hostelName || "General Hostel"}
+                                    </h3>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-1">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
+                                                <DoorOpen size={10} /> Unit
+                                            </p>
+                                            <p className="text-sm font-bold text-slate-700">{req.roomId?.roomNumber || "N/A"}</p>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
+                                                <BedDouble size={10} /> Position
+                                            </p>
+                                            <p className="text-sm font-bold text-slate-700">{req.bedId?.bedName || "N/A"}</p>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <h3 className="text-xl font-black text-slate-800 tracking-tight mb-4 group-hover:text-teal-700 transition-colors">
-                                    {req.hostelId?.hostelName || "General Hostel"}
-                                </h3>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
-                                            <DoorOpen size={10} /> Unit
-                                        </p>
-                                        <p className="text-sm font-bold text-slate-700">{req.roomId?.roomNumber || "N/A"}</p>
+                                <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
+                                    <div className="flex items-center gap-2 text-slate-400">
+                                        <Calendar size={14} />
+                                        <span className="text-xs font-medium uppercase tracking-tighter">
+                                            {new Date(req.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                        </span>
                                     </div>
-                                    <div className="space-y-1">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
-                                            <BedDouble size={10} /> Position
-                                        </p>
-                                        <p className="text-sm font-bold text-slate-700">{req.bedId?.bedName || "N/A"}</p>
-                                    </div>
+                                    <button className="text-slate-300 group-hover:text-teal-600 transition-colors">
+                                        <ArrowUpRight size={20} />
+                                    </button>
                                 </div>
                             </div>
-
-                            <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
-                                <div className="flex items-center gap-2 text-slate-400">
-                                    <Calendar size={14} />
-                                    <span className="text-xs font-medium uppercase tracking-tighter">
-                                        {new Date(req.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-                                    </span>
-                                </div>
-                                <button className="text-slate-300 group-hover:text-teal-600 transition-colors">
-                                    <ArrowUpRight size={20} />
-                                </button>
-                            </div>
-                        </div>
-                    ))}
+                        ))}
                 </div>
             )}
         </div>
