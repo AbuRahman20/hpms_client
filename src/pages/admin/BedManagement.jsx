@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Building2, DoorOpen, BedDouble, Search, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
+import {
+    Building2, DoorOpen, BedDouble, Search, CheckCircle2, XCircle, Loader2,
+} from 'lucide-react';
 
 function Bed() {
 
@@ -11,6 +13,7 @@ function Bed() {
     const [beds, setBeds] = useState([]);
     const [selectedHostel, setSelectedHostel] = useState('');
     const [selectedRoom, setSelectedRoom] = useState('');
+    const [selectedBedData, setSelectedBedData] = useState(null);
     const [loading, setLoading] = useState({ hostels: true, rooms: false, beds: false });
 
     // --- Logic: Fetch Hostels ---
@@ -130,7 +133,10 @@ function Bed() {
                                 <h3 className="text-xl font-black text-slate-800 tracking-tight">{bed.bedName}</h3>
                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Ref: {bed.bedId}</p>
 
-                                <button className="w-full mt-6 py-3 rounded-xl bg-slate-50 text-slate-600 text-xs font-bold hover:bg-slate-900 hover:text-white transition-colors">
+                                <button
+                                    onClick={() => setSelectedBedData(bed)}
+                                    className="w-full mt-6 py-3 rounded-xl bg-slate-50 text-slate-600 text-xs font-bold hover:bg-slate-900 hover:text-white transition-colors"
+                                >
                                     View Details
                                 </button>
                             </div>
@@ -143,6 +149,8 @@ function Bed() {
                     )}
                 </div>
             </div>
+
+            
         </div>
     );
 }
