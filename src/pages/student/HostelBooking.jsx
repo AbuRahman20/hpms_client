@@ -159,7 +159,7 @@ function HostelBooking() {
                                     <option value="">Choose a hostel...</option>
                                     {data.hostels.map(h => (
                                         <option key={h._id} value={h._id}>
-                                            {h.hostelName} {h.location ? `• ${h.location}` : ''}
+                                            {h.hostelName} 
                                         </option>
                                     ))}
                                 </select>
