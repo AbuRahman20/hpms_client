@@ -1,155 +1,230 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import axios from "axios";
 import {
     Building2, BedDouble, DoorOpen, Calendar,
-    Loader2, Inbox, ArrowUpRight, CheckCircle2,
-    Clock, XCircle, RefreshCw
+    Clock, CheckCircle2, XCircle, CreditCard
 } from "lucide-react";
 
+// ----- Filter Tabs (copied from admin) -----
+const FilterTabs = ({ filter, setFilter }) => {
+    const tabs = ["All", "Pending", "Approved", "Rejected"];
+    return (
+        <div className="flex items-center gap-3 bg-white p-1.5 rounded-2xl shadow-sm border border-slate-200">
+            {tabs.map((tab) => (
+                <button
+                    key={tab}
+                    onClick={() => setFilter(tab)}
+                    className={`px-6 py-2 rounded-xl text-xs font-bold transition-all ${filter === tab
+                        ? "bg-slate-900 text-white shadow-lg"
+                        : "text-slate-500 hover:bg-slate-50"
+                        }`}
+                    aria-pressed={filter === tab}
+                >
+                    {tab}
+                </button>
+            ))}
+        </div>
+    );
+};
+
+// ----- Status Badge (reused) -----
+const StatusBadge = ({ status }) => {
+    const styles = {
+        Approved: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        Rejected: "bg-rose-50 text-rose-700 border-rose-200",
+        Pending: "bg-amber-50 text-amber-700 border-amber-200",
+    };
+    const icons = {
+        Approved: <CheckCircle2 size={12} className="text-emerald-600" />,
+        Rejected: <XCircle size={12} className="text-rose-600" />,
+        Pending: <Clock size={12} className="text-amber-600" />,
+    };
+    return (
+        <span
+            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-medium border ${styles[status] || "bg-slate-100 text-slate-600 border-slate-200"
+                }`}
+        >
+            {icons[status] || <Clock size={12} />}
+            {status}
+        </span>
+    );
+};
+
+// ----- Skeleton Card (matching student card layout) -----
+const SkeletonCard = () => (
+    <div className="bg-white border border-slate-100 rounded-[1rem] overflow-hidden shadow-sm p-5 animate-pulse">
+        <div className="flex items-start justify-between mb-4">
+            <div className="w-10 h-10 bg-slate-200 rounded-xl" />
+            <div className="h-5 w-16 bg-slate-200 rounded-full" />
+        </div>
+        <div className="h-5 w-3/4 bg-slate-200 rounded mb-4" />
+        <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="h-4 w-20 bg-slate-200 rounded" />
+            <div className="h-4 w-16 bg-slate-200 rounded justify-self-end" />
+            <div className="h-4 w-24 bg-slate-200 rounded" />
+            <div className="h-4 w-14 bg-slate-200 rounded justify-self-end" />
+        </div>
+        <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+            <div className="h-4 w-24 bg-slate-200 rounded" />
+            <div className="h-4 w-16 bg-slate-200 rounded" />
+        </div>
+    </div>
+);
+
+// ----- Student Request Card (simplified, no actions) -----
+const StudentRequestCard = ({ request }) => {
+
+    const { hostelId, roomId, bedId, status, createdAt } = request;
+
+    return (
+        <div className="bg-white border border-slate-100 rounded-[1rem] overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+            <div className="p-5">
+                {/* Header: icon + status badge */}
+                <div className="flex items-start justify-between mb-4">
+                    <div className="w-10 h-10 bg-teal-600 rounded-xl flex items-center justify-center text-white">
+                        <Building2 size={20} />
+                    </div>
+                    <StatusBadge status={status} />
+                </div>
+
+                {/* Hostel name */}
+                <h3 className="font-semibold text-slate-800 text-lg mb-4">
+                    {hostelId?.hostelName || "Unknown Hostel"}
+                </h3>
+
+                {/* Room & bed details grid */}
+                <div className="grid grid-cols-2 gap-3 mb-4 text-xs">
+                    <div className="flex items-center gap-1.5 text-slate-600">
+                        <DoorOpen size={14} className="text-teal-600" />
+                        <span className="font-medium">Room {roomId?.roomNumber || "—"}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-slate-600 justify-end">
+                        <BedDouble size={14} className="text-teal-600" />
+                        <span className="font-medium">{bedId?.bedName || "—"}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-slate-600">
+                        <CreditCard size={14} className="text-teal-600" />
+                        <span className="font-medium">₹{roomId?.rentAmount ?? "—"}</span>
+                    </div>
+                </div>
+
+                {/* Footer: date only (no actions) */}
+                <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                    <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                        <Calendar size={14} />
+                        <span>
+                            {new Date(createdAt).toLocaleDateString('en-GB', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric'
+                            })}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// ----- Main Component -----
 function MyBookingRequest() {
 
     const apiUrl = import.meta.env.VITE_API_URL;
     const registerNo = sessionStorage.getItem("registerNo");
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [isRefreshing, setIsRefreshing] = useState(false);
+    const [error, setError] = useState(null);
+    const [filter, setFilter] = useState("All");
 
-    const fetchRequests = useCallback(async (quiet = false) => {
-        if (!quiet) setLoading(true);
-        else setIsRefreshing(true);
+    const fetchRequests = useCallback(async () => {
         try {
+            setLoading(true);
+            setError(null);
             const res = await axios.get(`${apiUrl}/api/myRequest/my-requests/${registerNo}`);
             setRequests(res.data);
-        } catch (error) {
-            console.error("Fetch Error:", error);
+        } catch (err) {
+            setError(err.response?.data?.message || "Failed to load your requests");
+            console.error("Fetch error:", err);
         } finally {
             setLoading(false);
-            setIsRefreshing(false);
         }
     }, [apiUrl, registerNo]);
 
     useEffect(() => {
-        fetchRequests();
-    }, [fetchRequests]);
+        if (registerNo) fetchRequests();
+    }, [fetchRequests, registerNo]);
 
-    if (loading) {
+    const filteredRequests = useMemo(() => {
+        if (filter === "All") return requests;
+        return requests.filter((req) => req.status === filter);
+    }, [requests, filter]);
+
+    if (!registerNo) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                <div className="relative">
-                    <Loader2 className="animate-spin text-teal-600" size={48} strokeWidth={1.5} />
-                    <div className="absolute inset-0 bg-teal-500/10 blur-xl rounded-full" />
-                </div>
-                <p className="text-slate-400 font-medium animate-pulse text-sm">Syncing your requests...</p>
+            <div className="text-center py-20 bg-white rounded-[1rem] border border-slate-100">
+                <div className="text-slate-400 text-6xl mb-4">🔒</div>
+                <h3 className="text-xl font-bold text-slate-700">Not logged in</h3>
+                <p className="text-slate-500 mt-2">Please log in to view your requests.</p>
             </div>
         );
     }
 
     return (
-        <div className="max-w-7xl mx-auto">
-
-            {/* --- HEADER --- */}
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-                <div>
-                    <div className="flex items-center gap-2 text-teal-600 font-black text-[10px] uppercase tracking-[0.3em] mb-2">
-                        <div className="w-4 h-px bg-teal-600" /> Activity Log
+        <div className="min-h-screen bg-slate-50/50 font-sans">
+            <div className="mx-auto">
+                {/* Header with title and filter tabs */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+                    <div>
+                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+                            My Booking Requests
+                        </h1>
+                        <p className="text-slate-500 font-medium">
+                            Track the status of your hostel accommodation requests.
+                        </p>
                     </div>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tight">Booking History</h1>
-                    <p className="text-slate-500 mt-2 font-medium">Track the real-time status of your accommodation requests.</p>
+                    <FilterTabs filter={filter} setFilter={setFilter} />
                 </div>
 
-                <button
-                    onClick={() => fetchRequests(true)}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all shadow-sm active:scale-95"
-                >
-                    <RefreshCw size={14} className={isRefreshing ? "animate-spin" : ""} />
-                    {isRefreshing ? "Updating..." : "Refresh Data"}
-                </button>
-            </header>
-
-            {/* --- CONTENT --- */}
-            {requests.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-32 border-2 border-dashed border-slate-100 rounded-[3rem] bg-slate-50/30">
-                    <div className="p-6 bg-white rounded-full shadow-xl mb-6">
-                        <Inbox className="text-slate-200" size={40} />
+                {/* Error message */}
+                {error && (
+                    <div className="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 font-medium flex items-center justify-between">
+                        <span>⚠️ {error}</span>
+                        <button
+                            onClick={fetchRequests}
+                            className="underline underline-offset-2 font-bold"
+                        >
+                            Retry
+                        </button>
                     </div>
-                    <h3 className="text-xl font-bold text-slate-800">No History Found</h3>
-                    <p className="text-slate-400 max-w-xs text-center mt-2 leading-relaxed">It looks like you haven't submitted any booking requests yet.</p>
-                </div>
-            ) : (
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {requests
-                        .filter((req) => req.status === "Pending")
-                        .map((req) => (
-                            <div
-                                key={req._id}
-                                className="group relative bg-white border border-slate-100 rounded-[2rem] p-8 shadow-sm hover:shadow-2xl hover:shadow-slate-200/50 transition-all duration-300 flex flex-col justify-between"
-                            >
-                                <div>
-                                    <div className="flex justify-between items-start mb-6">
-                                        <div className="p-3 bg-slate-50 rounded-2xl group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors">
-                                            <Building2 size={24} />
-                                        </div>
-                                        <StatusBadge status={req.status} />
-                                    </div>
+                )}
 
-                                    <h3 className="text-xl font-black text-slate-800 tracking-tight mb-4 group-hover:text-teal-700 transition-colors">
-                                        {req.hostelId?.hostelName || "General Hostel"}
-                                    </h3>
-
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-1">
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
-                                                <DoorOpen size={10} /> Unit
-                                            </p>
-                                            <p className="text-sm font-bold text-slate-700">{req.roomId?.roomNumber || "N/A"}</p>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
-                                                <BedDouble size={10} /> Position
-                                            </p>
-                                            <p className="text-sm font-bold text-slate-700">{req.bedId?.bedName || "N/A"}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
-                                    <div className="flex items-center gap-2 text-slate-400">
-                                        <Calendar size={14} />
-                                        <span className="text-xs font-medium uppercase tracking-tighter">
-                                            {new Date(req.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-                                        </span>
-                                    </div>
-                                    <button className="text-slate-300 group-hover:text-teal-600 transition-colors">
-                                        <ArrowUpRight size={20} />
-                                    </button>
-                                </div>
-                            </div>
+                {/* Content */}
+                {loading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {[...Array(3)].map((_, i) => (
+                            <SkeletonCard key={i} />
                         ))}
-                </div>
-            )}
+                    </div>
+                ) : filteredRequests.length === 0 ? (
+                    <div className="text-center py-20 bg-white rounded-[2rem] border border-slate-100">
+                        <div className="text-slate-400 text-6xl mb-4">📭</div>
+                        <h3 className="text-xl font-bold text-slate-700">No requests found</h3>
+                        <p className="text-slate-500 mt-2">
+                            {filter === "All"
+                                ? "You haven't submitted any booking requests yet."
+                                : `You have no ${filter.toLowerCase()} requests at the moment.`}
+                        </p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {filteredRequests.map((request) => (
+                            <StudentRequestCard key={request._id} request={request} />
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
-
-const StatusBadge = ({ status }) => {
-    const styles = {
-        Approved: "bg-emerald-50 text-emerald-700 border-emerald-100 ring-emerald-500/10",
-        Rejected: "bg-rose-50 text-rose-700 border-rose-100 ring-rose-500/10",
-        Pending: "bg-amber-50 text-amber-700 border-amber-100 ring-amber-500/10",
-    };
-
-    const icons = {
-        Approved: <CheckCircle2 size={12} />,
-        Rejected: <XCircle size={12} />,
-        Pending: <Clock size={12} />,
-    };
-
-    return (
-        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ring-2 ${styles[status] || styles.Pending}`}>
-            {icons[status] || icons.Pending}
-            {status}
-        </span>
-    );
-};
 
 export default MyBookingRequest;

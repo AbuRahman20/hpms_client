@@ -16,6 +16,7 @@ import AllocationMangement from "./pages/admin/AllocationMangement";
 // StudentRoutes
 import HostelBooking from './pages/student/HostelBooking';
 import MyBookingRequest from './pages/student/MyBookingRequest';
+import MyAllocations from './pages/student/MyAllocations';
 
 function App() {
     return (
@@ -23,6 +24,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Login />} />
                 <Route path="/layout/*" element={<Layout />}>
+
                     {/* Admin Routes */}
                     <Route path="hostelManagement" element={<HostelManagement />} />
                     <Route path="bedManagement" element={<BedManagement />} />
@@ -30,9 +32,11 @@ function App() {
                     <Route path="userAdministration" element={<UserAdministration />} />
                     <Route path="bookingRequests" element={<BookingRequest />} />
                     <Route path='allocationManagement' element={<AllocationMangement />} />
+
                     {/* Student Routes */}
                     <Route path='hostelBooking' element={<HostelBooking />} />
                     <Route path='myBookingRequests' element={<MyBookingRequest />} />
+                    <Route path='myAllocations' element={<MyAllocations />} />
                 </Route>
             </Routes>
         </Router>

@@ -21,7 +21,8 @@ function Layout() {
 
     const studentNavItems = [
         { to: "/layout/hostelBooking", icon: Building2, label: "Hostel Booking" },
-        { to: "/layout/myBookingRequests", icon: ClipboardList, label: "My Booking Requests" },
+        { to: "/layout/myAllocations", icon: BedDouble, label: "My Allocations" },
+        { to: "/layout/myBookingRequests", icon: ClipboardList, label: "My Requests" },
         { to: "/layout/contactSupport", icon: Phone, label: "Contact Support" },
         { to: "/layout/settings", icon: Settings, label: "Settings" },
     ];

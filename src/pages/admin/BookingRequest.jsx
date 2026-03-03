@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import axios from "axios";
 import {
-    User, Phone, GraduationCap, Building2,
+    User, Phone, GraduationCap, Building2, Clock, Calendar,
     BedDouble, CreditCard, CheckCircle, XCircle, DoorOpen
 } from "lucide-react";
 
@@ -92,107 +92,116 @@ const SkeletonCard = () => (
 );
 
 const RequestCard = ({ request, onApprove, onReject }) => {
-
-    const { studentId, hostelId, roomId, bedId, status, _id } = request;
+    const { studentId, hostelId, roomId, bedId, status, _id, createdAt } = request;
 
     const statusStyles = {
-        Approved: "bg-emerald-50 text-emerald-600",
-        Rejected: "bg-rose-50 text-rose-600",
-        Pending: "bg-amber-50 text-amber-600",
+        Approved: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        Rejected: "bg-rose-50 text-rose-700 border-rose-200",
+        Pending: "bg-amber-50 text-amber-700 border-amber-200",
+    };
+
+    const statusIcons = {
+        Approved: <CheckCircle size={12} className="text-emerald-600" />,
+        Rejected: <XCircle size={12} className="text-rose-600" />,
+        Pending: <Clock size={12} className="text-amber-600" />,
     };
 
     const handleApprove = () => {
-        if (window.confirm("Are you sure you want to approve this request?")) {
-            onApprove(_id);
-        }
+        if (window.confirm("Approve this request?")) onApprove(_id);
     };
 
     const handleReject = () => {
-        if (window.confirm("Are you sure you want to reject this request?")) {
-            onReject(_id);
-        }
+        if (window.confirm("Reject this request?")) onReject(_id);
     };
 
     return (
-        <div className="bg-white border border-slate-100 rounded-[1rem] overflow-hidden shadow-sm hover:shadow-xl transition-all group">
-            <div className="p-6">
-                <div className="flex items-start justify-between mb-6">
+        <div className="bg-white border border-slate-100 rounded-[1rem] overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+            <div className="p-5">
+                {/* Header: avatar + name + status badge */}
+                <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white font-bold">
+                        <div className="w-10 h-10 bg-teal-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
                             {studentId?.name?.charAt(0) || "?"}
                         </div>
                         <div>
-                            <h3 className="font-black text-slate-800 tracking-tight leading-none mb-1">
+                            <h3 className="font-semibold text-slate-800 leading-tight">
                                 {studentId?.name || "Unknown"}
                             </h3>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                                ID : {studentId?.registerNo || "N/A"}
+                            <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">
+                                {studentId?.registerNo || "N/A"}
                             </p>
                         </div>
                     </div>
                     <span
-                        className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter shadow-sm ${statusStyles[status] || "bg-slate-100 text-slate-600"
-                            }`}
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-medium border ${statusStyles[status] || "bg-slate-100 text-slate-600 border-slate-200"}`}
                     >
+                        {statusIcons[status] || <Clock size={12} />}
                         {status}
                     </span>
                 </div>
 
-                <div className="space-y-3 mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                    <div className="flex items-center gap-3 text-slate-600">
+                {/* Contact info with icons */}
+                <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4 space-y-2">
+                    <div className="flex items-center gap-2 text-xs text-slate-600">
                         <Phone size={14} className="text-slate-400" />
-                        <span className="text-xs font-bold">{studentId?.phone || "—"}</span>
+                        <span className="font-medium">{studentId?.phone || "—"}</span>
                     </div>
-                    <div className="flex items-center gap-3 text-slate-600">
+                    <div className="flex items-center gap-2 text-xs text-slate-600">
                         <GraduationCap size={14} className="text-slate-400" />
-                        <span className="text-xs font-bold">{studentId?.department || "—"}</span>
+                        <span className="font-medium">{studentId?.department || "—"}</span>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="flex items-center gap-2">
+                {/* Room details grid */}
+                <div className="grid grid-cols-2 gap-3 mb-4 text-xs">
+                    <div className="flex items-center gap-1.5 text-slate-600">
                         <Building2 size={14} className="text-teal-600" />
-                        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-tighter">
-                            {hostelId?.hostelName || "—"}
-                        </span>
+                        <span className="font-medium">{hostelId?.hostelName || "—"}</span>
                     </div>
-                    <div className="flex items-center gap-2 justify-end">
+                    <div className="flex items-center gap-1.5 text-slate-600 justify-end">
                         <CreditCard size={14} className="text-teal-600" />
-                        <span className="text-xs font-black text-slate-800 italic">
-                            ₹{roomId?.rentAmount ?? "—"}
-                        </span>
+                        <span className="font-medium">₹{roomId?.rentAmount ?? "—"}</span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 text-slate-600">
                         <DoorOpen size={14} className="text-teal-600" />
-                        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-tighter">
-                            Room {roomId?.roomNumber || "—"}
-                        </span>
+                        <span className="font-medium">Room {roomId?.roomNumber || "—"}</span>
                     </div>
-                    <div className="flex items-center gap-2 justify-end">
+                    <div className="flex items-center gap-1.5 text-slate-600 justify-end">
                         <BedDouble size={14} className="text-teal-600" />
-                        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-tighter">
-                            {bedId?.bedName || "—"}
-                        </span>
+                        <span className="font-medium">{bedId?.bedName || "—"}</span>
                     </div>
                 </div>
 
-                <div className="flex gap-2 pt-4 border-t border-slate-50">
-                    <button
-                        onClick={handleApprove}
-                        className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 text-xs active:scale-95 shadow-lg shadow-emerald-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled={status !== "Pending"}
-                        aria-label="Approve request"
-                    >
-                        <CheckCircle size={14} /> Approve
-                    </button>
-                    <button
-                        onClick={handleReject}
-                        className="flex-1 bg-white hover:bg-rose-50 text-rose-600 border border-rose-100 font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 text-xs active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled={status !== "Pending"}
-                        aria-label="Reject request"
-                    >
-                        <XCircle size={14} /> Reject
-                    </button>
+                {/* Footer: date + approve/reject buttons */}
+                <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                    <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                        <Calendar size={14} />
+                        <span>
+                            {new Date(createdAt).toLocaleDateString('en-GB', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric'
+                            })}
+                        </span>
+                    </div>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={handleApprove}
+                            disabled={status !== "Pending"}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-medium rounded-lg border border-emerald-200 hover:bg-emerald-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                            aria-label="Approve"
+                        >
+                            <CheckCircle size={14} /> Approve
+                        </button>
+                        <button
+                            onClick={handleReject}
+                            disabled={status !== "Pending"}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-rose-50 text-rose-700 text-xs font-medium rounded-lg border border-rose-200 hover:bg-rose-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                            aria-label="Reject"
+                        >
+                            <XCircle size={14} /> Reject
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
