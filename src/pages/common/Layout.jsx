@@ -12,8 +12,6 @@ function Layout() {
         { to: "/layout/supportCenter", icon: Phone, label: "Support Center" },
         { to: "/layout/userAdministration", icon: Users, label: "User Administration" },
         { to: "/layout/hostelManagement", icon: Building2, label: "Hostel Management" },
-        { to: "/layout/roomAllocation", icon: DoorOpen, label: "Room Management" },
-        { to: "/layout/bedManagement", icon: BedDouble, label: "Bed Management" },
         { to: "/layout/bookingRequests", icon: ClipboardList, label: "Booking Requests" },
         { to: "/layout/allocationManagement", icon: CheckCircle2, label: "Allocation Management" },
         { to: "/layout/systemSettings", icon: Settings, label: "System Settings" },

@@ -1,161 +1,199 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import {
-    User, Hash, MapPin, Bed, ShieldCheck,
-    ChevronRight, LogOut, LayoutGrid, Search, Eye
-} from "lucide-react";
+    Bed, Eye, LogOut, Search, LayoutGrid, User, MapPin,
+} from 'lucide-react';
 
 function AllocationManagement() {
-    const apiUrl = import.meta.env.VITE_API_URL;
-    const [allocations, setAllocations] = useState([]);
-    const [loading, setLoading] = useState(true);
 
-    const fetchAllocations = async () => {
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const [beds, setBeds] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const fetchBedsWithStatus = async () => {
         setLoading(true);
         try {
-            const res = await axios.get(`${apiUrl}/api/allocation/all`);
-            setAllocations(res.data);
+            const res = await axios.get(`${apiUrl}/api/allocation/with-status`);
+            setBeds(res.data);
         } catch (error) {
-            console.error("Data fetch failed", error);
+            console.error('Failed to fetch beds', error);
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => { fetchAllocations(); }, []);
+    useEffect(() => {
+        fetchBedsWithStatus();
+    }, []);
 
-    const handleVacate = async (id) => {
-        if (!window.confirm("Confirm termination of this allocation?")) return;
-        await axios.patch(`${apiUrl}/api/allocation/vacate/${id}`);
-        fetchAllocations();
+    const handleVacate = async (allocationId) => {
+        if (!window.confirm('Confirm termination of this allocation?')) return;
+        await axios.patch(`${apiUrl}/api/allocation/vacate/${allocationId}`);
+        fetchBedsWithStatus();
     };
 
+    const handleView = (bed) => {
+        alert(`View details for bed: ${bed.bedName} (Room ${bed.room?.roomNumber})`);
+    };
+
+    const filteredBeds = beds.filter(bed => {
+        const studentName = bed.allocation?.student?.name || '';
+        const studentReg = bed.allocation?.student?.registerNo || '';
+        const bedName = bed.bedName || '';
+        const roomNumber = bed.room?.roomNumber?.toString() || '';
+        const hostelName = bed.hostel?.hostelName || '';
+        const term = searchTerm.toLowerCase();
+        return studentName.toLowerCase().includes(term) ||
+            studentReg.toLowerCase().includes(term) ||
+            bedName.toLowerCase().includes(term) ||
+            roomNumber.includes(term) ||
+            hostelName.toLowerCase().includes(term);
+    });
+
     return (
-        <div className="min-h-screen bg-[#f8fafc] p-6 lg:p-10 font-sans text-slate-900">
-            <div className="max-w-7xl mx-auto">
+        <div className="min-h-screen font-sans antialiased">
+            <div className="">
 
-                {/* --- HEADER SECTION --- */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
-                    <div>
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className="h-2 w-2 bg-indigo-600 rounded-full animate-pulse"></span>
-                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Live System</span>
+                {/* Header */}
+                <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div>
+                            <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+                                Allocation Management
+                            </h1>
+                            <p className="text-slate-500 font-medium">
+                                Overview of all beds and current allocations
+                            </p>
                         </div>
-                        <h1 className="text-4xl font-black tracking-tighter text-slate-900 uppercase">
-                            Allocation <span className="text-indigo-600">Portal</span>
-                        </h1>
                     </div>
-
-                    <div className="flex items-center gap-3">
-                        <div className="relative group">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" size={18} />
-                            <input
-                                type="text"
-                                placeholder="Search by Student or Reg No..."
-                                className="pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all w-64 text-sm font-medium"
-                            />
-                        </div>
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                        <input
+                            type="text"
+                            placeholder="Search by student, bed, room..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="pl-10 pr-4 py-2.5 w-full sm:w-72 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-shadow"
+                        />
                     </div>
                 </div>
 
-                {/* --- TABLE CONTAINER --- */}
-                <div className="bg-white rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.04)] border border-slate-100 overflow-hidden">
+                {/* Table Card */}
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+                        <table className="w-full text-sm text-center">
                             <thead>
-                                <tr className="bg-slate-50/50">
-                                    <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100">Identity</th>
-                                    <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100">Location Details</th>
-                                    <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100">Registrar</th>
-                                    <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100">Status</th>
-                                    <th className="p-6 text-right text-[10px] font-black uppercase tracking-widest text-slate-400 border-b border-slate-100">Actions</th>
+                                <tr className="bg-slate-50 border-b border-slate-100">
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Hostel</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Bed</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Room</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Student</th>
+                                    <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-50">
-                                {allocations.map((a) => (
-                                    <tr key={a._id} className="group hover:bg-slate-50/80 transition-all duration-200">
+                            <tbody className="divide-y divide-slate-100">
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan="6" className="px-6 py-12 text-center text-slate-400">
+                                            Loading beds...
+                                        </td>
+                                    </tr>
+                                ) : filteredBeds.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="6" className="px-6 py-12 text-center text-slate-400">
+                                            No beds found matching your search.
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    filteredBeds.map((bed) => (
+                                        <tr key={bed._id} className="hover:bg-slate-50/80 transition-colors">
 
-                                        {/* Identity Column */}
-                                        <td className="p-6">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
-                                                    <User size={20} />
-                                                </div>
-                                                <div>
-                                                    <p className="font-black text-slate-900 leading-none mb-1">{a.studentId?.name}</p>
-                                                    <div className="flex items-center gap-1 text-slate-400">
-                                                        <Hash size={12} />
-                                                        <span className="text-xs font-bold font-mono tracking-tight">{a.studentId?.registerNo}</span>
+                                            {/* Hostel */}
+                                            <td className="px-6 py-4 text-slate-700">
+                                                {bed.hostel?.hostelName || '—'}
+                                            </td>
+
+                                            {/* Room */}
+                                            <td className="px-6 py-4 text-slate-700">
+                                                {bed.room?.roomNumber || '—'}
+                                            </td>
+
+                                            {/* Bed */}
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center justify-center gap-3">
+                                                    <div className="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600">
+                                                        <Bed size={16} />
                                                     </div>
+                                                    <span className="font-medium text-slate-900">{bed.bedName || 'Unnamed'}</span>
                                                 </div>
-                                            </div>
-                                        </td>
+                                            </td>
 
-                                        {/* Location Column */}
-                                        <td className="p-6">
-                                            <div className="space-y-1">
-                                                <div className="flex items-center gap-2 text-slate-700">
-                                                    <MapPin size={14} className="text-indigo-500" />
-                                                    <span className="text-sm font-bold uppercase tracking-tight">{a.hostelId?.hostelName}</span>
-                                                </div>
-                                                <div className="flex items-center gap-3 text-slate-400 text-[11px] font-black uppercase tracking-widest pl-5">
-                                                    <span>Room {a.roomId?.roomNumber}</span>
-                                                    <span className="h-1 w-1 bg-slate-200 rounded-full"></span>
-                                                    <span>{a.bedId?.bedName}</span>
-                                                </div>
-                                            </div>
-                                        </td>
+                                            {/* Status */}
+                                            <td className="px-6 py-4">
+                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${bed.status === 'Available'
+                                                    ? 'bg-emerald-50 text-emerald-700'
+                                                    : 'bg-rose-50 text-rose-700'
+                                                    }`}>
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${bed.status === 'Available' ? 'bg-emerald-500' : 'bg-rose-500'
+                                                        }`} />
+                                                    {bed.status}
+                                                </span>
+                                            </td>
 
-                                        {/* Registrar Column */}
-                                        <td className="p-6">
-                                            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg w-fit">
-                                                <ShieldCheck size={14} className="text-slate-500" />
-                                                <span className="text-xs font-bold text-slate-600 tracking-tight">{a.allocatedBy || "System Admin"}</span>
-                                            </div>
-                                        </td>
+                                            {/* Student */}
+                                            <td className="px-6 py-4">
+                                                {bed.allocation ? (
+                                                    <div>
+                                                        <p className="font-medium text-slate-900">{bed.allocation.student?.name}</p>
+                                                        <p className="text-xs text-slate-500 font-mono mt-0.5">{bed.allocation.student?.registerNo}</p>
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-slate-300">—</span>
+                                                )}
+                                            </td>
 
-                                        {/* Status Column */}
-                                        <td className="p-6">
-                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wide border ${a.status === "Active"
-                                                    ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-                                                    : "bg-rose-50 text-rose-600 border-rose-100"
-                                                }`}>
-                                                <span className={`h-1.5 w-1.5 rounded-full ${a.status === "Active" ? "bg-emerald-500" : "bg-rose-500"}`}></span>
-                                                {a.status}
-                                            </span>
-                                        </td>
-
-                                        {/* Action Column */}
-                                        <td className="p-6 text-right">
-                                            <div className="flex items-center justify-end gap-2">
-                                                <button onClick={() => setSelectedAllocation(a)}>
-                                                    <Eye size={18} />
-                                                </button>
-                                                {a.status === "Active" && (
+                                            {/* Actions */}
+                                            <td className="px-6 py-4 text-right">
+                                                <div className="flex items-center justify-center gap-2">
                                                     <button
-                                                        onClick={() => handleVacate(a._id)}
-                                                        className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-rose-600 transition-all shadow-md active:scale-95"
+                                                        onClick={() => handleView(bed)}
+                                                        className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                                        title="View details"
+                                                    >
+                                                        <Eye size={18} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => bed.allocation && handleVacate(bed.allocation._id)}
+                                                        disabled={!bed.allocation}
+                                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${bed.allocation
+                                                            ? 'bg-rose-50 text-rose-700 hover:bg-rose-100 cursor-pointer'
+                                                            : 'bg-slate-50 text-slate-300 cursor-not-allowed'
+                                                            }`}
+                                                        title={bed.allocation ? 'Vacate this bed' : 'Bed is not occupied'}
                                                     >
                                                         <LogOut size={14} />
                                                         Vacate
                                                     </button>
-                                                )}
-                                            </div>
-                                        </td>
-
-                                    </tr>
-                                ))}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                {/* --- FOOTER INFO --- */}
-                <div className="mt-8 flex justify-between items-center text-slate-400">
-                    <p className="text-xs font-bold uppercase tracking-widest">Total Allocations: {allocations.length}</p>
-                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em]">
-                        <LayoutGrid size={12} />
-                        Grid v4.0.2
+                {/* Footer */}
+                <div className="mt-6 flex items-center justify-between text-xs text-slate-400">
+                    <p className="font-medium">
+                        Total beds: <span className="text-slate-700">{beds.length}</span>
+                    </p>
+                    <div className="flex items-center gap-1">
+                        <LayoutGrid size={14} />
+                        <span>Bed Overview</span>
                     </div>
                 </div>
             </div>

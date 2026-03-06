@@ -41,8 +41,8 @@ function EditTable({ isEditModalOpen, setIsEditModalOpen, editUser }) {
 
     return (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-50 p-6 transition-all">
-            <div className="bg-[#fcfcfd] rounded-3xl shadow-2xl w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden border border-white/20 animate-in zoom-in-95 duration-300">
-                
+            <div className="bg-[#fcfcfd] rounded-3xl shadow-2xl w-full max-w-5xl max-h-[85vh] flex flex-col overflow-hidden border border-white/20 animate-in zoom-in-95 duration-300">
+
                 {/* --- HEADER (MATCHES ADD MODAL) --- */}
                 <div className="px-10 py-7 bg-white border-b border-slate-100 flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -65,7 +65,7 @@ function EditTable({ isEditModalOpen, setIsEditModalOpen, editUser }) {
                 {/* --- DATA ENTRY GRID --- */}
                 <div className="overflow-y-auto p-10 flex-1 custom-scrollbar">
                     <form id="editUserForm" onSubmit={handleUpdateUser} className="grid grid-cols-12 gap-x-8 gap-y-10">
-                        
+
                         {/* ZONE A: SECURITY & ACCESS */}
                         <div className="col-span-12 lg:col-span-4 space-y-6">
                             <div className="flex items-center gap-2 mb-4">
@@ -195,7 +195,7 @@ function EditTable({ isEditModalOpen, setIsEditModalOpen, editUser }) {
                             Cancel
                         </button>
                         <button
-                            form="editUserForm" 
+                            form="editUserForm"
                             type="submit"
                             className="flex items-center gap-2 bg-slate-900 text-white px-10 py-3 rounded-2xl text-sm font-bold hover:bg-teal-600 transition-all shadow-xl shadow-slate-200 active:scale-95"
                         >

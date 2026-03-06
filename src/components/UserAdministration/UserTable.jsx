@@ -2,7 +2,7 @@ import React from 'react';
 import { Edit3, Trash2, Phone, GraduationCap, Hash, ArrowUpRight } from 'lucide-react';
 
 function UserTable({ filteredUsers, searchTerm, onDelete, onEdit }) {
-    
+
     const getInitials = (name) => {
         return name ? name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) : '??';
     };
@@ -12,7 +12,7 @@ function UserTable({ filteredUsers, searchTerm, onDelete, onEdit }) {
             {filteredUsers.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {filteredUsers.map((user, index) => (
-                        <div 
+                        <div
                             key={user.registerNo || index}
                             className="group relative bg-white border border-slate-200 rounded-2xl p-5 hover:shadow-xl hover:shadow-teal-500/5 hover:border-teal-500/30 transition-all duration-300"
                         >
@@ -31,16 +31,16 @@ function UserTable({ filteredUsers, searchTerm, onDelete, onEdit }) {
                                         </span>
                                     </div>
                                 </div>
-                                
+
                                 {/* Quick Action Menu (Visible on Hover) */}
-                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button 
+                                <div className="flex gap-1 opacity-100 group-hover:opacity-100 transition-opacity">
+                                    <button
                                         onClick={() => onEdit(user)}
                                         className="p-2 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors"
                                     >
                                         <Edit3 className="w-4 h-4" />
                                     </button>
-                                    <button 
+                                    <button
                                         onClick={() => onDelete(user)}
                                         className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                     >
@@ -77,7 +77,7 @@ function UserTable({ filteredUsers, searchTerm, onDelete, onEdit }) {
                                     <Phone className="w-4 h-4" />
                                     <span className="text-sm font-medium">{user.phone}</span>
                                 </div>
-                               
+
                             </div>
                         </div>
                     ))}
@@ -92,7 +92,7 @@ function UserTable({ filteredUsers, searchTerm, onDelete, onEdit }) {
                     <p className="text-slate-400 mt-1 text-center max-w-xs">
                         We couldn't find anyone matching <span className="text-teal-600 font-bold">"{searchTerm}"</span>.
                     </p>
-                    <button 
+                    <button
                         onClick={() => window.location.reload()}
                         className="mt-6 text-sm font-bold text-teal-600 hover:underline"
                     >

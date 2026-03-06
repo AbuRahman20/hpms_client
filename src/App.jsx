@@ -8,8 +8,6 @@ import Layout from "./pages/common/Layout";
 // Admin Routes
 import HostelManagement from "./pages/admin/HostelManagement";
 import UserAdministration from "./pages/admin/UserAdministration";
-import RoomAllocation from "./pages/admin/RoomAllocation";
-import BedManagement from "./pages/admin/BedManagement";
 import BookingRequest from "./pages/admin/BookingRequest";
 import AllocationMangement from "./pages/admin/AllocationMangement";
 
@@ -27,8 +25,6 @@ function App() {
 
                     {/* Admin Routes */}
                     <Route path="hostelManagement" element={<HostelManagement />} />
-                    <Route path="bedManagement" element={<BedManagement />} />
-                    <Route path="roomAllocation" element={<RoomAllocation />} />
                     <Route path="userAdministration" element={<UserAdministration />} />
                     <Route path="bookingRequests" element={<BookingRequest />} />
                     <Route path='allocationManagement' element={<AllocationMangement />} />

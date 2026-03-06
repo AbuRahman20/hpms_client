@@ -12,8 +12,8 @@ function AddNewUser({ isAddModalOpen, setIsAddModalOpen, formData, handleInputCh
 
     return (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-50 p-6 transition-all">
-            <div className="bg-[#fcfcfd] rounded-3xl shadow-2xl w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden border border-white/20 animate-in zoom-in-95 duration-300">
-                
+            <div className="bg-[#fcfcfd] rounded-3xl shadow-2xl w-full max-w-5xl max-h-[85vh] flex flex-col overflow-hidden border border-white/20 animate-in zoom-in-95 duration-300">
+
                 {/* --- STEALTH HEADER --- */}
                 <div className="px-10 py-7 bg-white border-b border-slate-100 flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -36,7 +36,7 @@ function AddNewUser({ isAddModalOpen, setIsAddModalOpen, formData, handleInputCh
                 {/* --- DATA ENTRY GRID --- */}
                 <div className="overflow-y-auto p-10 flex-1 custom-scrollbar">
                     <form id="addUserForm" onSubmit={handleAddUser} className="grid grid-cols-12 gap-x-8 gap-y-10">
-                        
+
                         {/* ZONE A: SECURITY & ACCESS */}
                         <div className="col-span-12 lg:col-span-4 space-y-6">
                             <div className="flex items-center gap-2 mb-4">
@@ -76,7 +76,7 @@ function AddNewUser({ isAddModalOpen, setIsAddModalOpen, formData, handleInputCh
                                     <input name='registerNo' onChange={handleInputChange} value={formData.registerNo} type="text" className="w-full bg-slate-200 border-none rounded-xl px-4 py-3 text-sm font-mono focus:ring-2 focus:ring-teal-500/20" />
                                 </div>
                                 <div>
-                                    <InputLabel label="Aadhar Reference" required/>
+                                    <InputLabel label="Aadhar Reference" required />
                                     <input name='aadharNo' onChange={handleInputChange} value={formData.aadharNo} type="text" className="w-full bg-slate-200 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-teal-500/20" />
                                 </div>
                                 <div className="col-span-2 md:col-span-1">
@@ -89,7 +89,7 @@ function AddNewUser({ isAddModalOpen, setIsAddModalOpen, formData, handleInputCh
                                         <input name='year' onChange={handleInputChange} value={formData.year} type="number" className="w-full bg-slate-200 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-teal-500/20" />
                                     </div>
                                     <div>
-                                        <InputLabel label="Sem" required/>
+                                        <InputLabel label="Sem" required />
                                         <input name='semester' onChange={handleInputChange} value={formData.semester} type="number" className="w-full bg-slate-200 border-none rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-teal-500/20" />
                                     </div>
                                 </div>
@@ -104,15 +104,15 @@ function AddNewUser({ isAddModalOpen, setIsAddModalOpen, formData, handleInputCh
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 bg-white p-8 rounded-3xl border border-slate-200/50">
                                 <div>
-                                    <InputLabel label="Father's Name" required/>
+                                    <InputLabel label="Father's Name" required />
                                     <input name='fatherName' onChange={handleInputChange} value={formData.fatherName} type="text" className="w-full bg-slate-200 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-teal-500 outline-none" />
                                 </div>
                                 <div>
-                                    <InputLabel label="Religion" required/>
+                                    <InputLabel label="Religion" required />
                                     <input name='religion' onChange={handleInputChange} value={formData.religion} type="text" className="w-full bg-slate-200 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-teal-500 outline-none" />
                                 </div>
                                 <div>
-                                    <InputLabel label="Caste / Category" required/>
+                                    <InputLabel label="Caste / Category" required />
                                     <input name='category' onChange={handleInputChange} value={formData.category} type="text" className="w-full bg-slate-200 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-teal-500 outline-none" />
                                 </div>
                                 <div>
@@ -167,7 +167,7 @@ function AddNewUser({ isAddModalOpen, setIsAddModalOpen, formData, handleInputCh
                             Discard
                         </button>
                         <button
-                            form="addUserForm" 
+                            form="addUserForm"
                             type="submit"
                             className="bg-slate-900 text-white px-10 py-3 rounded-2xl text-sm font-bold hover:bg-teal-600 transition-all shadow-xl shadow-slate-200 active:scale-95"
                         >
