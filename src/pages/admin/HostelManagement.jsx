@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import {
     Building2, DoorOpen, Bed, Search, Plus, Pencil, Trash2,
-    X, AlertCircle, LayoutGrid
+    X, LayoutGrid, CheckCircle2, AlertCircle
 } from 'lucide-react';
 
+// --- Improved Form Modal with Dynamic Selects ---
 const FormModal = ({ isOpen, onClose, title, fields, initialData, onSubmit, isSubmitting }) => {
-
-    const [formData, setFormData] = useState(initialData || {});
+    const [formData, setFormData] = useState({});
 
     useEffect(() => {
-        setFormData(initialData || {});
-    }, [initialData]);
+        if (isOpen) setFormData(initialData || {});
+    }, [initialData, isOpen]);
 
     if (!isOpen) return null;
 
@@ -20,66 +20,59 @@ const FormModal = ({ isOpen, onClose, title, fields, initialData, onSubmit, isSu
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit(formData);
-    };
-
     return (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-                <div className="flex items-center justify-between p-6 border-b border-slate-100">
-                    <h2 className="text-xl font-bold text-slate-900">{title}</h2>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg transition">
-                        <X size={20} className="text-slate-400" />
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in duration-200">
+                <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50/50">
+                    <h2 className="text-xl font-bold text-slate-800">{title}</h2>
+                    <button onClick={onClose} className="p-2 hover:bg-white rounded-full transition shadow-sm text-slate-400 hover:text-slate-600">
+                        <X size={20} />
                     </button>
                 </div>
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                    {fields.map(field => (
-                        <div key={field.name}>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">
-                                {field.label} {field.required && <span className="text-rose-500">*</span>}
-                            </label>
-                            {field.type === 'select' ? (
-                                <select
-                                    name={field.name}
-                                    value={formData[field.name] || ''}
-                                    onChange={handleChange}
-                                    required={field.required}
-                                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
-                                >
-                                    <option value="">Select {field.label}</option>
-                                    {field.options?.map(opt => (
-                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                    ))}
-                                </select>
-                            ) : (
-                                <input
-                                    type={field.type || 'text'}
-                                    name={field.name}
-                                    value={formData[field.name] || ''}
-                                    onChange={handleChange}
-                                    placeholder={field.placeholder}
-                                    required={field.required}
-                                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
-                                />
-                            )}
-                        </div>
-                    ))}
-                    <div className="flex gap-3 pt-4">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="flex-1 px-4 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 transition"
-                        >
+                <form onSubmit={(e) => { e.preventDefault(); onSubmit(formData); }} className="p-6 space-y-4">
+                    <div className="space-y-4 max-h-[60vh] overflow-y-auto px-1">
+                        {fields.map(field => (
+                            <div key={field.name}>
+                                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5">
+                                    {field.label} {field.required && <span className="text-rose-500">*</span>}
+                                </label>
+                                {field.type === 'select' ? (
+                                    <select
+                                        name={field.name}
+                                        value={formData[field.name] || ''}
+                                        onChange={handleChange}
+                                        required={field.required}
+                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none appearance-none cursor-pointer transition-all"
+                                    >
+                                        <option value="">-- Choose {field.label} --</option>
+                                        {field.options?.map(opt => (
+                                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                        ))}
+                                    </select>
+                                ) : (
+                                    <input
+                                        type={field.type || 'text'}
+                                        name={field.name}
+                                        value={formData[field.name] || ''}
+                                        onChange={handleChange}
+                                        placeholder={field.placeholder}
+                                        required={field.required}
+                                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all"
+                                    />
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex gap-3 pt-4 border-t border-slate-100 mt-6">
+                        <button type="button" onClick={onClose} className="flex-1 px-4 py-3 font-bold text-slate-600 rounded-xl hover:bg-slate-100 transition">
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex-1 px-4 py-3 font-bold bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition disabled:opacity-50 shadow-lg shadow-indigo-100"
                         >
-                            {isSubmitting ? 'Saving...' : 'Save'}
+                            {isSubmitting ? 'Saving...' : 'Confirm'}
                         </button>
                     </div>
                 </form>
@@ -88,450 +81,252 @@ const FormModal = ({ isOpen, onClose, title, fields, initialData, onSubmit, isSu
     );
 };
 
-function Table({ data, columns, loading, error, onEdit, onDelete, entityName }) {
-    if (loading) {
-        return <div className="p-8 text-center text-slate-400">Loading {entityName}...</div>;
-    }
-
-    if (error) {
-        return (
-            <div className="p-8 text-center text-rose-500 flex items-center justify-center gap-2">
-                <AlertCircle size={18} />
-                {error}
-            </div>
-        );
-    }
-
-    if (data.length === 0) {
-        return <div className="p-8 text-center text-slate-400">No {entityName} found.</div>;
-    }
-
-    return (
-        <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-                <thead className="bg-slate-50 border-b border-slate-100">
-                    <tr>
-                        {columns.map(col => (
-                            <th key={col.key} className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                {col.label}
-                            </th>
-                        ))}
-                        <th className="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                    {data.map((item, idx) => (
-                        <tr key={item._id || idx} className="hover:bg-slate-50/80 transition-colors">
-                            {columns.map(col => (
-                                <td key={col.key} className="px-6 py-4 text-slate-700">
-                                    {col.render ? col.render(item) : item[col.key] || '—'}
-                                </td>
-                            ))}
-                            <td className="px-6 py-4 text-right">
-                                <div className="flex items-center justify-end gap-2">
-                                    <button
-                                        onClick={() => onEdit(item)}
-                                        className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition"
-                                        title="Edit"
-                                    >
-                                        <Pencil size={16} />
-                                    </button>
-                                    <button
-                                        onClick={() => onDelete(item)}
-                                        className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
-                                        title="Delete"
-                                    >
-                                        <Trash2 size={16} />
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
-}
-
 function HostelRoomBedManagement() {
-
     const apiUrl = import.meta.env.VITE_API_URL;
-
-    // Data states
-    const [hostels, setHostels] = useState([]);
-    const [rooms, setRooms] = useState([]);
-    const [beds, setBeds] = useState([]);
-
-    // UI states
-    const [loading, setLoading] = useState({ hostels: false, rooms: false, beds: false });
-    const [error, setError] = useState({ hostels: null, rooms: null, beds: null });
-
-    // Search terms per entity
-    const [hostelSearch, setHostelSearch] = useState('');
-    const [roomSearch, setRoomSearch] = useState('');
-    const [bedSearch, setBedSearch] = useState('');
+    const [activeTab, setActiveTab] = useState('hostels');
+    const [data, setData] = useState({ hostels: [], rooms: [], beds: [] });
+    const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
 
     // Modal states
     const [modalOpen, setModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
-    const [modalType, setModalType] = useState(null); // 'hostel', 'room', 'bed'
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Fetch all data on mount
     useEffect(() => {
-        fetchHostels();
-        fetchRooms();
-        fetchBeds();
+        fetchAllData();
     }, []);
 
-    const fetchHostels = async () => {
-        setLoading(prev => ({ ...prev, hostels: true }));
+    const fetchAllData = async () => {
+        setLoading(true);
         try {
-            const res = await axios.get(`${apiUrl}/fetchhosteldata`);
-            setHostels(res.data || []);
+            const [h, r, b] = await Promise.all([
+                axios.get(`${apiUrl}/fetchhosteldata`),
+                axios.get(`${apiUrl}/fetchroomdata`),
+                axios.get(`${apiUrl}/fetchbeddata`)
+            ]);
+            setData({ 
+                hostels: h.data || [], 
+                rooms: r.data || [], 
+                beds: b.data || [] 
+            });
         } catch (err) {
-            setError(prev => ({ ...prev, hostels: 'Failed to load hostels' }));
+            console.error("Critical: Could not sync with database.");
         } finally {
-            setLoading(prev => ({ ...prev, hostels: false }));
+            setLoading(false);
         }
     };
 
-    const fetchRooms = async () => {
-        setLoading(prev => ({ ...prev, rooms: true }));
-        try {
-            const res = await axios.get(`${apiUrl}/fetchroomdata`);
-            setRooms(res.data || []);
-        } catch (err) {
-            setError(prev => ({ ...prev, rooms: 'Failed to load rooms' }));
-        } finally {
-            setLoading(prev => ({ ...prev, rooms: false }));
-        }
+    // Table Column Definitions based on Tab
+    const columns = {
+        hostels: [
+            { key: 'hostelId', label: 'Hostel id' },
+            { key: 'location', label: 'Location' },
+            { key: 'totalRooms', label: 'Capacity' },
+            { key: 'wardenName', label: 'Warden' }
+        ],
+        rooms: [
+            { key: 'roomNumber', label: 'Room No' },
+            { key: 'hostelName', label: 'Hostel', render: (item) => data.hostels.find(h => h._id === item.hostelId)?.hostelName || 'Unassigned' },
+            { key: 'roomType', label: 'Category' },
+            { key: 'rentAmount', label: 'Rent', render: (item) => `₹${item.rentAmount}` }
+        ],
+        beds: [
+            { key: 'bedName', label: 'Bed Identifier' },
+            { key: 'roomRef', label: 'Room Context', render: (item) => {
+                const room = data.rooms.find(r => r._id === item.roomId);
+                return room ? `Room ${room.roomNumber}` : 'N/A';
+            }},
+            { key: 'status', label: 'Current Status' }
+        ]
     };
 
-    const fetchBeds = async () => {
-        setLoading(prev => ({ ...prev, beds: true }));
-        try {
-            const res = await axios.get(`${apiUrl}/fetchbeddata`);
-            setBeds(res.data || []);
-        } catch (err) {
-            setError(prev => ({ ...prev, beds: 'Failed to load beds' }));
-        } finally {
-            setLoading(prev => ({ ...prev, beds: false }));
-        }
-    };
+    // Filter Logic
+    const filteredList = useMemo(() => {
+        const query = searchQuery.toLowerCase();
+        return data[activeTab].filter(item => 
+            Object.values(item).some(val => String(val).toLowerCase().includes(query))
+        );
+    }, [data, activeTab, searchQuery]);
 
-    // Delete handlers
-    const handleDelete = async (type, id, name) => {
-        if (!window.confirm(`Are you sure you want to delete ${name}?`)) return;
-        try {
-            let endpoint = '';
-            switch (type) {
-                case 'hostel': endpoint = `/deletehostel/${id}`; break;
-                case 'room': endpoint = `/deleteroom/${id}`; break;
-                case 'bed': endpoint = `/deletebed/${id}`; break;
-                default: return;
-            }
-            await axios.delete(`${apiUrl}${endpoint}`);
-            // Refresh appropriate list
-            if (type === 'hostel') fetchHostels();
-            if (type === 'room') fetchRooms();
-            if (type === 'bed') fetchBeds();
-        } catch (err) {
-            alert('Failed to delete');
-        }
-    };
-
-    // Open modal for add/edit
-    const openModal = (type, item = null) => {
-        setModalType(type);
-        setEditingItem(item);
-        setModalOpen(true);
-    };
-
-    // Submit modal form
-    const handleModalSubmit = async (formData) => {
+    const handleAction = async (formData) => {
         setIsSubmitting(true);
+        const entity = activeTab === 'hostels' ? 'hostel' : activeTab === 'rooms' ? 'room' : 'bed';
         try {
-            const isEditing = !!editingItem;
-            let endpoint = '';
-            let method = 'post';
-            let payload = { ...formData };
-
-            switch (modalType) {
-                case 'hostel':
-                    endpoint = isEditing ? `/updatehostel/${editingItem._id}` : '/addhostel';
-                    break;
-                case 'room':
-                    endpoint = isEditing ? `/updateroom/${editingItem._id}` : '/addroom';
-                    break;
-                case 'bed':
-                    endpoint = isEditing ? `/updatebed/${editingItem._id}` : '/addbed';
-                    break;
-                default: return;
-            }
-
-            if (isEditing) {
-                await axios.put(`${apiUrl}${endpoint}`, payload);
+            if (editingItem) {
+                await axios.put(`${apiUrl}/update${entity}/${editingItem._id}`, formData);
             } else {
-                await axios.post(`${apiUrl}${endpoint}`, payload);
+                await axios.post(`${apiUrl}/add${entity}`, formData);
             }
-
-            // Refresh appropriate list
-            if (modalType === 'hostel') fetchHostels();
-            if (modalType === 'room') fetchRooms();
-            if (modalType === 'bed') fetchBeds();
-
             setModalOpen(false);
-            setEditingItem(null);
+            fetchAllData();
         } catch (err) {
-            alert('Operation failed');
+            alert("Error: Database rejected the request.");
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    // Filtering
-    const filteredHostels = hostels.filter(h =>
-        h.hostelName?.toLowerCase().includes(hostelSearch.toLowerCase()) ||
-        h.location?.toLowerCase().includes(hostelSearch.toLowerCase())
-    );
+    const deleteItem = async (id) => {
+        if (!window.confirm("Permanent Action: Are you sure?")) return;
+        const entity = activeTab === 'hostels' ? 'hostel' : activeTab === 'rooms' ? 'room' : 'bed';
+        try {
+            await axios.delete(`${apiUrl}/delete${entity}/${id}`);
+            fetchAllData();
+        } catch (err) { alert("Delete failed."); }
+    };
 
-    const filteredRooms = rooms.filter(r =>
-        r.roomNumber?.toString().includes(roomSearch) ||
-        r.roomType?.toLowerCase().includes(roomSearch.toLowerCase()) ||
-        hostels.find(h => h._id === r.hostelId)?.hostelName?.toLowerCase().includes(roomSearch.toLowerCase())
-    );
-
-    const filteredBeds = beds.filter(b =>
-        b.bedName?.toLowerCase().includes(bedSearch.toLowerCase()) ||
-        rooms.find(r => r._id === b.roomId)?.roomNumber?.toString().includes(bedSearch) ||
-        hostels.find(h => h._id === rooms.find(r => r._id === b.roomId)?.hostelId)?.hostelName?.toLowerCase().includes(bedSearch.toLowerCase())
-    );
-
-    // Modal field definitions (same as before)
-    const getModalFields = () => {
-        if (modalType === 'hostel') {
-            return [
-                { name: 'hostelId', label: 'Hostel ID', type: 'text', placeholder: 'e.g. HST001', required: true },
-                { name: 'hostelName', label: 'Hostel Name', type: 'text', placeholder: 'e.g. Boys Hostel', required: true },
-                { name: 'location', label: 'Location', type: 'text', placeholder: 'e.g. North Campus', required: true },
-                { name: 'totalRooms', label: 'Total Rooms', type: 'number', placeholder: 'e.g. 50', required: true },
-                { name: 'wardenName', label: 'Warden Name', type: 'text', placeholder: 'e.g. Mr. Sharma', required: false },
-            ];
-        }
-        if (modalType === 'room') {
-            return [
-                { name: 'roomId', label: 'Room ID', type: 'text', placeholder: 'e.g. RM001', required: true },
-                {
-                    name: 'hostelId', label: 'Hostel', type: 'select', required: true,
-                    options: hostels.map(h => ({ value: h._id, label: h.hostelName }))
-                },
-                { name: 'roomNumber', label: 'Room Number', type: 'number', placeholder: 'e.g. 101', required: true },
-                { name: 'roomType', label: 'Room Type', type: 'text', placeholder: 'e.g. Deluxe', required: true },
-                { name: 'totalBeds', label: 'Total Beds', type: 'number', placeholder: 'e.g. 2', required: true },
-                { name: 'rentAmount', label: 'Rent Amount', type: 'number', placeholder: 'e.g. 5000', required: true },
-                { name: 'status', label: 'Status', type: 'text', placeholder: 'e.g. Available', required: false },
-            ];
-        }
-        if (modalType === 'bed') {
-            return [
-                { name: 'bedId', label: 'Bed ID', type: 'text', placeholder: 'e.g. BD001', required: true },
-                {
-                    name: 'roomId', label: 'Room', type: 'select', required: true,
-                    options: rooms.map(r => ({ value: r._id, label: `${r.roomNumber} (${hostels.find(h => h._id === r.hostelId)?.hostelName})` }))
-                },
-                { name: 'bedName', label: 'Bed Name', type: 'text', placeholder: 'e.g. Bed A1', required: true },
-                { name: 'status', label: 'Status', type: 'text', placeholder: 'e.g. Available', required: false },
-            ];
-        }
+    // --- Dynamic Field Generation ---
+    const getActiveFields = () => {
+        if (activeTab === 'hostels') return [
+            { name: 'hostelId', label: 'System ID', required: true, placeholder: 'H-101' },
+            { name: 'hostelName', label: 'Name', required: true, placeholder: 'Main Campus Boys' },
+            { name: 'location', label: 'Location', required: true, placeholder: 'Block A, North Sector' },
+            { name: 'totalRooms', label: 'Total Rooms', type: 'number', required: true },
+            { name: 'wardenName', label: 'Warden Name' }
+        ];
+        if (activeTab === 'rooms') return [
+            { name: 'roomId', label: 'System ID', required: true },
+            { 
+                name: 'hostelId', 
+                label: 'Parent Hostel', 
+                type: 'select', 
+                required: true,
+                options: data.hostels.map(h => ({ value: h._id, label: h.hostelName }))
+            },
+            { name: 'roomNumber', label: 'Room Number', type: 'number', required: true },
+            { name: 'roomType', label: 'Room Type', placeholder: 'Standard/AC/Deluxe', required: true },
+            { name: 'rentAmount', label: 'Monthly Rent', type: 'number', required: true }
+        ];
+        if (activeTab === 'beds') return [
+            { name: 'bedId', label: 'System ID', required: true },
+            { 
+                name: 'roomId', 
+                label: 'Assign to Room', 
+                type: 'select', 
+                required: true,
+                options: data.rooms.map(r => ({ value: r._id, label: `Room ${r.roomNumber}` }))
+            },
+            { name: 'bedName', label: 'Bed Designation', placeholder: 'Bed-A1', required: true },
+            { name: 'status', label: 'Status', placeholder: 'Available' }
+        ];
         return [];
     };
 
     return (
-        <div className="min-h-screen  font-sans antialiased">
-            <div>
-                {/* Header */}
-                <div className="mb-8">
+        <div className="min-h-screen bg-slate-50 font-sans antialiased text-slate-900">
+            <div className="max-w-7xl mx-auto px-4 py-8">
+                
+                {/* Dashboard Header */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
                     <div>
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">
-                            Hostel Infrastructure
-                        </h1>
-                        <p className="text-slate-500 font-medium">
-                            Manage hostels, rooms, and beds
-                        </p>
+                        <h1 className="text-4xl font-black tracking-tight text-slate-900">Infrastructure</h1>
+                        <p className="text-slate-500 font-medium mt-1">Hierarchical Management: Hostels → Rooms → Beds</p>
+                    </div>
+
+                    <div className="flex bg-white p-1 rounded-2xl shadow-sm border border-slate-200">
+                        {[
+                            { id: 'hostels', icon: Building2, label: 'Hostels' },
+                            { id: 'rooms', icon: DoorOpen, label: 'Rooms' },
+                            { id: 'beds', icon: Bed, label: 'Beds' }
+                        ].map(tab => (
+                            <button
+                                key={tab.id}
+                                onClick={() => { setActiveTab(tab.id); setSearchQuery(''); }}
+                                className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                                    activeTab === tab.id 
+                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' 
+                                    : 'text-slate-400 hover:text-slate-600'
+                                }`}
+                            >
+                                <tab.icon size={18} />
+                                {tab.label}
+                            </button>
+                        ))}
                     </div>
                 </div>
 
-                {/* Hostels Section */}
-                <section className="mb-10">
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-                            <Building2 size={20} className="text-indigo-600" />
-                            Hostels
-                        </h2>
-                        <button
-                            onClick={() => openModal('hostel')}
-                            className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition shadow-sm"
-                        >
-                            <Plus size={16} />
-                            Add Hostel
-                        </button>
-                    </div>
-                    <div className="mb-8">
-                        <div className="relative max-w-sm">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                            <input
-                                type="text"
-                                placeholder="Search hostels..."
-                                value={hostelSearch}
-                                onChange={(e) => setHostelSearch(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                            />
-                        </div>
-                    </div>
-                    <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-                        <Table
-                            data={filteredHostels}
-                            columns={[
-                                { key: 'hostelId', label: 'ID' },
-                                { key: 'hostelName', label: 'Name' },
-                                { key: 'location', label: 'Location' },
-                                { key: 'totalRooms', label: 'Rooms' },
-                                { key: 'wardenName', label: 'Warden' },
-                            ]}
-                            loading={loading.hostels}
-                            error={error.hostels}
-                            onEdit={(item) => openModal('hostel', item)}
-                            onDelete={(item) => handleDelete('hostel', item._id, item.hostelName)}
-                            entityName="hostels"
+                {/* Search and Action Bar */}
+                <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-4 mb-6 flex flex-col md:flex-row gap-4 items-center">
+                    <div className="relative flex-1 w-full">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                        <input
+                            type="text"
+                            placeholder={`Search ${activeTab}...`}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full pl-12 pr-4 py-3 bg-slate-50 rounded-2xl border-none focus:ring-2 focus:ring-indigo-500/20 outline-none font-medium transition-all"
                         />
                     </div>
-                </section>
+                    <button 
+                        onClick={() => { setEditingItem(null); setModalOpen(true); }}
+                        className="w-full md:w-auto px-8 py-3 bg-slate-900 text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-slate-800 transition"
+                    >
+                        <Plus size={20} />
+                        Create New
+                    </button>
+                </div>
 
-                {/* Rooms Section */}
-                <section className="mb-10">
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-                            <DoorOpen size={20} className="text-indigo-600" />
-                            Rooms
-                        </h2>
-                        <button
-                            onClick={() => openModal('room')}
-                            className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition shadow-sm"
-                        >
-                            <Plus size={16} />
-                            Add Room
-                        </button>
-                    </div>
-                    <div className="mb-4">
-                        <div className="relative max-w-sm">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                            <input
-                                type="text"
-                                placeholder="Search rooms..."
-                                value={roomSearch}
-                                onChange={(e) => setRoomSearch(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                            />
-                        </div>
-                    </div>
-                    <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-                        <Table
-                            data={filteredRooms}
-                            columns={[
-                                { key: 'roomId', label: 'ID' },
-                                {
-                                    key: 'hostelId',
-                                    label: 'Hostel',
-                                    render: (item) => hostels.find(h => h._id === item.hostelId)?.hostelName || '—'
-                                },
-                                { key: 'roomNumber', label: 'Room No.' },
-                                { key: 'roomType', label: 'Type' },
-                                { key: 'totalBeds', label: 'Beds' },
-                                { key: 'rentAmount', label: 'Rent' },
-                                { key: 'status', label: 'Status' },
-                            ]}
-                            loading={loading.rooms}
-                            error={error.rooms}
-                            onEdit={(item) => openModal('room', item)}
-                            onDelete={(item) => handleDelete('room', item._id, `Room ${item.roomNumber}`)}
-                            entityName="rooms"
-                        />
-                    </div>
-                </section>
+                {/* Data Table */}
+                <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="bg-slate-50/50 border-b border-slate-100">
+                                {columns[activeTab].map(col => (
+                                    <th key={col.key} className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">{col.label}</th>
+                                ))}
+                                <th className="px-6 py-4 text-right text-xs font-bold text-slate-400 uppercase tracking-widest">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50">
+                            {loading ? (
+                                <tr><td colSpan="10" className="p-20 text-center text-slate-400 animate-pulse font-medium">Fetching infrastructure data...</td></tr>
+                            ) : filteredList.length === 0 ? (
+                                <tr><td colSpan="10" className="p-20 text-center text-slate-400 font-medium">No records found for this category.</td></tr>
+                            ) : filteredList.map(item => (
+                                <tr key={item._id} className="hover:bg-indigo-50/30 transition-colors group">
+                                    {columns[activeTab].map(col => (
+                                        <td key={col.key} className="px-6 py-4 text-sm font-semibold text-slate-700">
+                                            {col.render ? col.render(item) : item[col.key] || '—'}
+                                        </td>
+                                    ))}
+                                    <td className="px-6 py-4 text-right">
+                                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                                            <button onClick={() => { setEditingItem(item); setModalOpen(true); }} className="p-2 text-slate-400 hover:text-indigo-600 bg-white rounded-lg shadow-sm border border-slate-100 transition">
+                                                <Pencil size={16} />
+                                            </button>
+                                            <button onClick={() => deleteItem(item._id)} className="p-2 text-slate-400 hover:text-rose-600 bg-white rounded-lg shadow-sm border border-slate-100 transition">
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
 
-                {/* Beds Section */}
-                <section className="mb-10">
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-                            <Bed size={20} className="text-indigo-600" />
-                            Beds
-                        </h2>
-                        <button
-                            onClick={() => openModal('bed')}
-                            className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition shadow-sm"
-                        >
-                            <Plus size={16} />
-                            Add Bed
-                        </button>
+                {/* Footer Insight */}
+                <div className="mt-8 flex items-center justify-between text-slate-400 px-4">
+                    <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-tighter">
+                        <span className="flex items-center gap-1"><CheckCircle2 size={14} className="text-emerald-500" /> Database Sync Active</span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                        <span>{filteredList.length} Items Displayed</span>
                     </div>
-                    <div className="mb-4">
-                        <div className="relative max-w-sm">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                            <input
-                                type="text"
-                                placeholder="Search beds..."
-                                value={bedSearch}
-                                onChange={(e) => setBedSearch(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
-                            />
-                        </div>
-                    </div>
-                    <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-                        <Table
-                            data={filteredBeds}
-                            columns={[
-                                { key: 'bedId', label: 'ID' },
-                                {
-                                    key: 'roomId',
-                                    label: 'Room',
-                                    render: (item) => {
-                                        const room = rooms.find(r => r._id === item.roomId);
-                                        return room ? `${room.roomNumber} (${hostels.find(h => h._id === room.hostelId)?.hostelName})` : '—';
-                                    }
-                                },
-                                { key: 'bedName', label: 'Bed Name' },
-                                { key: 'status', label: 'Status' },
-                            ]}
-                            loading={loading.beds}
-                            error={error.beds}
-                            onEdit={(item) => openModal('bed', item)}
-                            onDelete={(item) => handleDelete('bed', item._id, item.bedName)}
-                            entityName="beds"
-                        />
-                    </div>
-                </section>
-
-                {/* Footer */}
-                <div className="mt-6 flex items-center justify-between text-xs text-slate-400">
-                    <p className="font-medium">
-                        Total: {hostels.length} Hostels, {rooms.length} Rooms, {beds.length} Beds
-                    </p>
-                    <div className="flex items-center gap-1">
-                        <LayoutGrid size={14} />
-                        <span>Infrastructure Manager</span>
+                    <div className="flex items-center gap-1 text-xs font-medium">
+                        <LayoutGrid size={14} /> 
+                        Infrastructure Engine v2.0
                     </div>
                 </div>
             </div>
 
-            {/* Modal */}
-            <FormModal
+            <FormModal 
                 isOpen={modalOpen}
                 onClose={() => setModalOpen(false)}
-                title={`${editingItem ? 'Edit' : 'Add'} ${modalType}`}
-                fields={getModalFields()}
+                title={editingItem ? `Modify ${activeTab.slice(0,-1)}` : `New ${activeTab.slice(0,-1)}`}
+                fields={getActiveFields()}
                 initialData={editingItem}
-                onSubmit={handleModalSubmit}
+                onSubmit={handleAction}
                 isSubmitting={isSubmitting}
             />
         </div>
