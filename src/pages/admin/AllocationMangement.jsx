@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
-    Bed, Eye, LogOut, Search, LayoutGrid, User, MapPin,
+    Bed, Eye, LogOut, Search, LayoutGrid, User, MapPin, X, Check
 } from 'lucide-react';
 
 function AllocationManagement() {
@@ -10,6 +10,12 @@ function AllocationManagement() {
     const [beds, setBeds] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+
+    const [showAllocationModal, setShowAllocationModal] = useState(false);
+    const [selectedBed, setSelectedBed] = useState(null);
+    const [unallocatedStudents, setUnallocatedStudents] = useState([]);
+    const [loadingStudents, setLoadingStudents] = useState(false);
+    const [allocating, setAllocating] = useState(false);
 
     const fetchBedsWithStatus = async () => {
         setLoading(true);
@@ -29,12 +35,52 @@ function AllocationManagement() {
 
     const handleVacate = async (allocationId) => {
         if (!window.confirm('Confirm termination of this allocation?')) return;
-        await axios.patch(`${apiUrl}/api/allocation/vacate/${allocationId}`);
-        fetchBedsWithStatus();
+        try {
+            await axios.patch(`${apiUrl}/api/allocation/vacate/${allocationId}`);
+            fetchBedsWithStatus();
+        } catch (error) {
+            console.error('Failed to vacate', error);
+        }
     };
 
-    const handleView = (bed) => {
-        alert(`View details for bed: ${bed.bedName} (Room ${bed.room?.roomNumber})`);
+    const handleView = async (bed) => {
+
+        if (bed.status !== 'Available') {
+            alert('This bed is currently occupied. Please vacate it first if you want to reassign.');
+            return;
+        }
+
+        setSelectedBed(bed);
+        setShowAllocationModal(true);
+
+        setLoadingStudents(true);
+        try {
+            const res = await axios.get(`${apiUrl}/api/allocation/students/unallocated`);
+            setUnallocatedStudents(res.data);
+        } catch (error) {
+            console.error('Failed to fetch unallocated students', error);
+        } finally {
+            setLoadingStudents(false);
+        }
+    };
+
+    const handleAllocate = async (studentId) => {
+
+        console.log('first')
+
+        try {
+            await axios.post(`${apiUrl}/api/allocation/allocate`, {
+                studentId,
+                bedId: selectedBed._id,
+            });
+            setShowAllocationModal(false);
+            fetchBedsWithStatus();
+        } catch (error) {
+            console.error('Allocation failed', error);
+            alert(error.response?.data?.message || 'Allocation failed');
+        } finally {
+            setAllocating(false);
+        }
     };
 
     const filteredBeds = beds.filter(bed => {
@@ -55,7 +101,6 @@ function AllocationManagement() {
         <div className="min-h-screen font-sans antialiased">
             <div className="">
 
-                {/* Header */}
                 <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div>
@@ -79,7 +124,7 @@ function AllocationManagement() {
                     </div>
                 </div>
 
-                {/* Table Card */}
+                {/* Table Card (mostly unchanged) */}
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm text-center">
@@ -115,11 +160,6 @@ function AllocationManagement() {
                                                 {bed.hostel?.hostelName || '—'}
                                             </td>
 
-                                            {/* Room */}
-                                            <td className="px-6 py-4 text-slate-700">
-                                                {bed.room?.roomNumber || '—'}
-                                            </td>
-
                                             {/* Bed */}
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center justify-center gap-3">
@@ -128,6 +168,11 @@ function AllocationManagement() {
                                                     </div>
                                                     <span className="font-medium text-slate-900">{bed.bedName || 'Unnamed'}</span>
                                                 </div>
+                                            </td>
+
+                                            {/* Room */}
+                                            <td className="px-6 py-4 text-slate-700">
+                                                {bed.room?.roomNumber || '—'}
                                             </td>
 
                                             {/* Status */}
@@ -160,7 +205,7 @@ function AllocationManagement() {
                                                     <button
                                                         onClick={() => handleView(bed)}
                                                         className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                                                        title="View details"
+                                                        title="Allocate student to this bed"
                                                     >
                                                         <Eye size={18} />
                                                     </button>
@@ -186,7 +231,7 @@ function AllocationManagement() {
                     </div>
                 </div>
 
-                {/* Footer */}
+                {/* Footer (unchanged) */}
                 <div className="mt-6 flex items-center justify-between text-xs text-slate-400">
                     <p className="font-medium">
                         Total beds: <span className="text-slate-700">{beds.length}</span>
@@ -197,7 +242,91 @@ function AllocationManagement() {
                     </div>
                 </div>
             </div>
-        </div>
+
+            {/* NEW: Allocation Modal */}
+            {showAllocationModal && (
+                <div className="fixed inset-0 z-50 overflow-y-auto">
+                    <div
+                        className="fixed inset-0 bg-slate-900/50 bg-opacity-50 transition-opacity"
+                        onClick={() => setShowAllocationModal(false)}
+                    />
+
+                    <div className="flex min-h-full items-center justify-center p-4">
+                        <div
+                            className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            {/* Modal content */}
+                            <div className="px-6 py-5">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-lg font-bold text-slate-900">Allocate Bed</h3>
+                                    <button
+                                        onClick={() => setShowAllocationModal(false)}
+                                        className="text-slate-400 hover:text-slate-600"
+                                    >
+                                        <X size={20} />
+                                    </button>
+                                </div>
+
+                                {selectedBed && (
+                                    <div className="mb-4 p-3 bg-slate-50 rounded-lg text-sm">
+                                        <p className="text-slate-600">
+                                            <span className="font-medium">Bed:</span> {selectedBed.bedName} (Room {selectedBed.room?.roomNumber})
+                                        </p>
+                                        <p className="text-slate-600">
+                                            <span className="font-medium">Hostel:</span> {selectedBed.hostel?.hostelName}
+                                        </p>
+                                    </div>
+                                )}
+
+                                {loadingStudents ? (
+                                    <div className="py-8 text-center text-slate-400">Loading students...</div>
+                                ) : unallocatedStudents.length === 0 ? (
+                                    <div className="py-8 text-center text-slate-400">No unallocated students available.</div>
+                                ) : (
+                                    <div className="max-h-80 overflow-y-auto hide-scrollbar">
+                                        <ul className="divide-y divide-slate-100">
+                                            {unallocatedStudents.map(student => (
+                                                <li key={student._id} className="py-3 flex items-center justify-between">
+                                                    <div>
+                                                        <p className="font-medium text-slate-900">{student.name}</p>
+                                                        <p className="text-xs text-slate-500">{student.registerNo}</p>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => handleAllocate(student._id)}
+                                                        disabled={allocating}
+                                                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-indigo-600 text-white text-xs font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    >
+                                                        {allocating ? 'Allocating...' : (
+                                                            <>
+                                                                <Check size={14} />
+                                                                Allocate
+                                                            </>
+                                                        )}
+                                                    </button>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Footer actions */}
+                            <div className="bg-slate-50 px-6 py-3 flex justify-end rounded-b-2xl">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowAllocationModal(false)}
+                                    className="px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div >
+            )
+            }
+        </div >
     );
 }
 

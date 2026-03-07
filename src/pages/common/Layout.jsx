@@ -17,7 +17,7 @@ function Layout() {
         { to: "/layout/bookingRequests", icon: ClipboardList, label: "Booking Requests" },
         { to: "/layout/allocationManagement", icon: CheckCircle2, label: "Allocation Management" },
         { to: "/layout/supportTickets", icon: AlertCircle, label: "Support Tickets" },
-        { to: "/layout/paymentManagement", icon: CreditCard, label: "Fee Collection" },
+        { to: "/layout/feeCollection", icon: CreditCard, label: "Fee Collection" },
         { to: "/layout/serviceReviews", icon: MessageSquare, label: "Service Reviews" },
     ];
 
