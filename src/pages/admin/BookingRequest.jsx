@@ -25,9 +25,11 @@ const useBookingRequests = (apiUrl) => {
         }
     }, [apiUrl]);
 
+    const registerNo = sessionStorage.getItem("registerNo");
+
     const updateRequestStatus = useCallback(async (id, status) => {
         try {
-            await axios.patch(`${apiUrl}/api/booking/update/${id}`, { status });
+            await axios.patch(`${apiUrl}/api/booking/update/${id}/${registerNo}`, { status });
             setRequests((prev) =>
                 prev.map((req) => (req._id === id ? { ...req, status } : req))
             );

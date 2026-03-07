@@ -1,6 +1,9 @@
 import React from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { LogOut, Phone, UserCircle, Settings, LayoutDashboard, Users, Building2, DoorOpen, BedDouble, ClipboardList, CheckCircle2 } from "lucide-react";
+import {
+    LogOut, Phone, UserCircle, Settings, LayoutDashboard, Users, Building2,
+    DoorOpen, BedDouble, ClipboardList, CheckCircle2, AlertCircle, CreditCard, MessageSquare
+} from "lucide-react";
 
 function Layout() {
 
@@ -8,21 +11,24 @@ function Layout() {
     const navigate = useNavigate();
 
     const adminNavItems = [
-        { to: "/layout/s", icon: LayoutDashboard, label: "Admin Dashboard" },
-        { to: "/layout/supportCenter", icon: Phone, label: "Support Center" },
+        { to: "/layout/adminDashboard", icon: LayoutDashboard, label: "Admin Dashboard" },
         { to: "/layout/userAdministration", icon: Users, label: "User Administration" },
         { to: "/layout/hostelManagement", icon: Building2, label: "Hostel Management" },
         { to: "/layout/bookingRequests", icon: ClipboardList, label: "Booking Requests" },
         { to: "/layout/allocationManagement", icon: CheckCircle2, label: "Allocation Management" },
-        { to: "/layout/systemSettings", icon: Settings, label: "System Settings" },
+        { to: "/layout/supportTickets", icon: AlertCircle, label: "Support Tickets" },
+        { to: "/layout/paymentManagement", icon: CreditCard, label: "Fee Collection" },
+        { to: "/layout/serviceReviews", icon: MessageSquare, label: "Service Reviews" },
     ];
 
     const studentNavItems = [
+        { to: "/layout/studentDashboard", icon: LayoutDashboard, label: "Student Dashboard" },
         { to: "/layout/hostelBooking", icon: Building2, label: "Hostel Booking" },
         { to: "/layout/myAllocations", icon: BedDouble, label: "My Allocations" },
         { to: "/layout/myBookingRequests", icon: ClipboardList, label: "My Requests" },
-        { to: "/layout/contactSupport", icon: Phone, label: "Contact Support" },
-        { to: "/layout/settings", icon: Settings, label: "Settings" },
+        { to: "/layout/myComplaints", icon: AlertCircle, label: "My Complaints" },
+        { to: "/layout/myPayments", icon: CreditCard, label: "My Payments" },
+        { to: "/layout/feedback", icon: MessageSquare, label: "Feedback" },
     ];
 
     const navItems = role === "admin" ? adminNavItems : studentNavItems;
